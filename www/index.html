@@ -7,8 +7,8 @@
 <title>I & E ShambaSmart</title>
 
 <!-- Maktaba za PDF na Excel -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <style>
@@ -229,7 +229,6 @@ th,td{
 
 <body>
 
-<!-- Skrini ya kupakia programu -->
 <section id="loadingScreen" class="auth">
   <div class="card">
     <h2>I & E ShambaSmart 🌱</h2>
@@ -240,7 +239,6 @@ th,td{
   </div>
 </section>
 
-<!-- Skrini ya kuingia -->
 <section id="authScreen" class="auth hidden">
   <div class="card">
     <h1>I & E ShambaSmart 🌱</h1>
@@ -310,7 +308,6 @@ th,td{
   </div>
 </section>
 
-<!-- Programu kuu -->
 <section id="appScreen" class="hidden">
 
   <header>
@@ -326,7 +323,6 @@ th,td{
   <main>
     <div id="appMessage" aria-live="polite"></div>
 
-    <!-- Nyumbani -->
     <section id="page-home">
       <div class="card">
         <h2>Dashboard ya Shamba</h2>
@@ -369,7 +365,6 @@ th,td{
       </div>
     </section>
 
-    <!-- Kuongeza muamala -->
     <section id="page-add" class="hidden">
       <div class="card">
         <h2>Ongeza muamala wa shamba</h2>
@@ -415,7 +410,6 @@ th,td{
       </div>
     </section>
 
-    <!-- Miamala yote -->
     <section id="page-transactions" class="hidden">
       <div class="card">
         <h2>Miamala yote ya shamba</h2>
@@ -432,7 +426,6 @@ th,td{
       </div>
     </section>
 
-    <!-- Ripoti -->
     <section id="page-reports" class="hidden">
       <div class="card">
         <h2>Ripoti za fedha za shamba</h2>
@@ -494,7 +487,6 @@ th,td{
       </div>
     </section>
 
-    <!-- Akaunti -->
     <section id="page-account" class="hidden">
       <div class="card">
         <h2>Akaunti yangu</h2>
@@ -977,72 +969,81 @@ function downloadPDF(){
   if(!window.jspdf||!window.jspdf.jsPDF){
     message(
       'appMessage',
-      'Maktaba ya PDF haijapakia. Kagua intaneti ujaribu tena.',
+      'Maktaba ya PDF haijapakia. Kagua intaneti, kisha pakia upya programu.',
       'error'
     );
     return;
   }
 
-  const {jsPDF}=window.jspdf;
-  const pdf=new jsPDF();
-  const totals=calculateTotals(list);
-  const period=reportPeriod();
+  try{
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF();
+    const totals=calculateTotals(list);
+    const period=reportPeriod();
 
-  pdf.setFontSize(16);
-  pdf.text('I & E ShambaSmart',14,18);
+    pdf.setFontSize(16);
+    pdf.text('I & E ShambaSmart',14,18);
 
-  pdf.setFontSize(11);
-  pdf.text('Ripoti ya mapato na matumizi ya shamba',14,27);
-  pdf.text('Kuanzia: '+period.start,14,35);
-  pdf.text('Mpaka: '+period.end,14,42);
-  pdf.text('Jumla ya mapato: '+money(totals.income),14,52);
-  pdf.text('Jumla ya matumizi: '+money(totals.expense),14,59);
-  pdf.text('Salio: '+money(totals.balance),14,66);
-  pdf.text('Idadi ya miamala: '+list.length,14,73);
+    pdf.setFontSize(11);
+    pdf.text('Ripoti ya mapato na matumizi ya shamba',14,27);
+    pdf.text('Kuanzia: '+period.start,14,35);
+    pdf.text('Mpaka: '+period.end,14,42);
+    pdf.text('Jumla ya mapato: '+money(totals.income),14,52);
+    pdf.text('Jumla ya matumizi: '+money(totals.expense),14,59);
+    pdf.text('Salio: '+money(totals.balance),14,66);
+    pdf.text('Idadi ya miamala: '+list.length,14,73);
 
-  const rows=list.map(t=>[
-    t.date||'',
-    t.type==='income'?'Mapato':'Matumizi',
-    t.description||'',
-    t.person||'',
-    money(t.amount)
-  ]);
+    const rows=list.map(t=>[
+      t.date||'',
+      t.type==='income'?'Mapato':'Matumizi',
+      t.description||'',
+      t.person||'',
+      money(t.amount)
+    ]);
 
-  if(typeof pdf.autoTable!=='function'){
+    if(typeof pdf.autoTable!=='function'){
+      message(
+        'appMessage',
+        'Jedwali la PDF halijapakia. Hakikisha intaneti inafanya kazi, kisha pakia upya programu.',
+        'error'
+      );
+      return;
+    }
+
+    pdf.autoTable({
+      startY:81,
+      head:[['Tarehe','Aina','Maelezo','Mhusika','Kiasi']],
+      body:rows,
+      styles:{fontSize:8,cellPadding:2},
+      headStyles:{fillColor:[22,101,52]},
+      margin:{left:14,right:14},
+      didDrawPage:function(){
+        const pageCount=pdf.internal.getNumberOfPages();
+
+        pdf.setFontSize(8);
+        pdf.text(
+          'I & E ShambaSmart | Ukurasa '+pageCount,
+          14,
+          pdf.internal.pageSize.getHeight()-8
+        );
+      }
+    });
+
+    pdf.save('ShambaSmart-Ripoti.pdf');
+
     message(
       'appMessage',
-      'Jedwali la PDF halijapakia. Kagua intaneti ujaribu tena.',
+      'Ripoti ya PDF imeandaliwa.',
+      'success'
+    );
+  }catch(err){
+    console.error('PDF error:',err);
+    message(
+      'appMessage',
+      'PDF imeshindwa kutengenezwa. Kagua intaneti na ujaribu tena.',
       'error'
     );
-    return;
   }
-
-  pdf.autoTable({
-    startY:81,
-    head:[['Tarehe','Aina','Maelezo','Mhusika','Kiasi']],
-    body:rows,
-    styles:{fontSize:8,cellPadding:2},
-    headStyles:{fillColor:[22,101,52]},
-    margin:{left:14,right:14},
-    didDrawPage:function(){
-      const pageCount=pdf.internal.getNumberOfPages();
-
-      pdf.setFontSize(8);
-      pdf.text(
-        'I & E ShambaSmart | Ukurasa '+pageCount,
-        14,
-        pdf.internal.pageSize.getHeight()-8
-      );
-    }
-  });
-
-  pdf.save('ShambaSmart-Ripoti.pdf');
-
-  message(
-    'appMessage',
-    'Ripoti ya PDF imeandaliwa.',
-    'success'
-  );
 }
 
 function downloadExcel(){
