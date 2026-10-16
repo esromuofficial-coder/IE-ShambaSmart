@@ -50,7 +50,58 @@ th,td{padding:9px 6px;border-bottom:1px solid var(--border);text-align:left}
 @media(min-width:650px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
 </head>
+<section id="page-account" class="hidden">
 
+  <div class="card">
+    <h2 id="accountTitle">Taarifa Zangu</h2>
+
+    <p>
+      <strong>Jina langu:</strong>
+      <span id="accountName">—</span>
+    </p>
+
+    <button id="editAccountButton" class="btn" type="button">
+      Hariri Taarifa
+    </button>
+  </div>
+
+  <div id="editAccountPanel" class="card hidden">
+    <h2>Hariri Taarifa Zangu</h2>
+
+    <form id="editAccountForm">
+      <div class="field">
+        <label for="editAccountName">Jina Kamili</label>
+        <input
+          id="editAccountName"
+          type="text"
+          maxlength="100"
+          required
+        >
+      </div>
+
+      <button id="saveAccountButton" class="btn full" type="submit">
+        Hifadhi Mabadiliko
+      </button>
+
+      <button id="cancelAccountButton"
+              class="btn secondary full"
+              type="button"
+              style="margin-top:10px">
+        Ghairi
+      </button>
+    </form>
+
+    <div id="accountMessage" aria-live="polite"></div>
+  </div>
+
+  <div class="card">
+    <h2>Kuhusu Mradi</h2>
+    <p><strong>Mmiliki wa Mradi:</strong> Ibrahim</p>
+    <p><strong>Msimamizi wa Mradi:</strong> Esromu</p>
+    <p><strong>Jina la Mradi:</strong> I & E ShambaSmart</p>
+  </div>
+
+</section>
 <body>
 <section id="loadingScreen" class="auth">
  <div class="card">
@@ -106,7 +157,74 @@ th,td{padding:9px 6px;border-bottom:1px solid var(--border);text-align:left}
   <div id="authMessage" aria-live="polite"></div>
  </div>
 </section>
+// Fungua sehemu ya kuhariri jina
+$('editAccountButton').addEventListener('click', () => {
+  if (!user) return;
 
+  $('editAccountName').value = user.displayName || '';
+  $('editAccountPanel').classList.remove('hidden');
+  $('accountMessage').innerHTML = '';
+});
+
+// Ghairi mabadiliko
+$('cancelAccountButton').addEventListener('click', () => {
+  $('editAccountPanel').classList.add('hidden');
+  $('accountMessage').innerHTML = '';
+});
+
+// Hifadhi jina jipya
+$('editAccountForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  if (!user) return;
+
+  const name = $('editAccountName').value.trim();
+  const button = $('saveAccountButton');
+
+  if (!name) {
+    msg('accountMessage', 'Tafadhali ingiza jina lako.', 'error');
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = 'Inahifadhi...';
+
+  try {
+    // Sasisha jina kwenye Firebase Authentication
+    await updateProfile(user, {
+      displayName: name
+    });
+
+    // Hifadhi jina kwenye Firestore bila kufuta taarifa nyingine
+    await setDoc(
+      doc(db, 'users', user.uid),
+      {
+        uid: user.uid,
+        name: name
+      },
+      { merge: true }
+    );
+
+    // Onyesha jina jipya ndani ya programu
+    $('accountName').textContent = name;
+    $('welcomeText').textContent =
+      tr[appLanguage].welcome + ', ' + name;
+
+    $('editAccountPanel').classList.add('hidden');
+
+    msg(
+      'appMessage',
+      'Jina lako limebadilishwa kwa mafanikio.',
+      'success'
+    );
+
+  } catch (error) {
+    msg('accountMessage', errorText(error), 'error');
+  } finally {
+    button.disabled = false;
+    button.textContent = 'Hifadhi Mabadiliko';
+  }
+});
 <section id="appScreen" class="hidden">
  <header>
   <div>
