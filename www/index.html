@@ -1,1864 +1,830 @@
 <!DOCTYPE html>
 <html lang="sw">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#14532d">
-
-  <title>I & E ShambaSmart</title>
-
-  <style>
-    :root {
-      --green: #166534;
-      --green-dark: #14532d;
-      --green-light: #dcfce7;
-      --background: #f3f7f3;
-      --white: #ffffff;
-      --text: #17251b;
-      --muted: #647067;
-      --border: #dce5dd;
-      --red: #b91c1c;
-      --orange: #b45309;
-      --shadow: 0 8px 24px rgba(20, 83, 45, 0.08);
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--background);
-      color: var(--text);
-    }
-
-    button,
-    input,
-    select {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .brand {
-      color: var(--green-dark);
-      font-size: 25px;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-    }
-
-    .brand span {
-      color: #65a30d;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    /* LOGIN */
-
-    .auth-page {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 22px;
-      background:
-        radial-gradient(circle at top right, #bbf7d0, transparent 38%),
-        linear-gradient(135deg, #f0fdf4, #e2e8f0);
-    }
-
-    .auth-card {
-      width: 100%;
-      max-width: 430px;
-      padding: 30px;
-      background: var(--white);
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    .auth-card h1 {
-      margin-bottom: 6px;
-    }
-
-    .auth-card .brand {
-      margin-bottom: 24px;
-    }
-
-    .form-group {
-      margin-bottom: 16px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 7px;
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    input,
-    select {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: #fff;
-      outline: none;
-    }
-
-    input:focus,
-    select:focus {
-      border-color: var(--green);
-      box-shadow: 0 0 0 3px #dcfce7;
-    }
-
-    .btn {
-      display: inline-flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      padding: 12px 16px;
-      border: 0;
-      border-radius: 10px;
-      font-weight: 700;
-      transition: 0.2s;
-    }
-
-    .btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .btn-primary {
-      background: var(--green);
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: var(--green-dark);
-    }
-
-    .btn-light {
-      background: #e8f5eb;
-      color: var(--green-dark);
-    }
-
-    .btn-danger {
-      background: #fee2e2;
-      color: var(--red);
-    }
-
-    .btn-full {
-      width: 100%;
-    }
-
-    .auth-links {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 17px;
-    }
-
-    .text-button {
-      border: 0;
-      padding: 4px 0;
-      background: transparent;
-      color: var(--green);
-      font-size: 14px;
-      font-weight: 700;
-    }
-
-    .message {
-      margin: 14px 0;
-      padding: 12px;
-      border-radius: 9px;
-      font-size: 14px;
-      line-height: 1.5;
-      overflow-wrap: anywhere;
-    }
-
-    .message.error {
-      color: #991b1b;
-      background: #fee2e2;
-    }
-
-    .message.success {
-      color: #166534;
-      background: #dcfce7;
-    }
-
-    .message.info {
-      color: #92400e;
-      background: #fef3c7;
-    }
-
-    /* APPLICATION */
-
-    .app-header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 15px 5%;
-      background: white;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .user-info {
-      text-align: right;
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .user-info strong {
-      display: block;
-    }
-
-    .container {
-      width: min(1200px, 94%);
-      margin: 25px auto 45px;
-    }
-
-    .welcome {
-      margin-bottom: 22px;
-    }
-
-    .welcome h1 {
-      margin: 0 0 7px;
-      font-size: clamp(23px, 4vw, 31px);
-    }
-
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-
-    .stat-card {
-      padding: 20px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      box-shadow: var(--shadow);
-      min-width: 0;
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-
-    .stat-value {
-      font-size: clamp(17px, 2vw, 25px);
-      font-weight: 800;
-      overflow-wrap: anywhere;
-    }
-
-    .green {
-      color: var(--green);
-    }
-
-    .red {
-      color: var(--red);
-    }
-
-    .section {
-      margin-bottom: 22px;
-      padding: 22px;
-      border: 1px solid var(--border);
-      border-radius: 15px;
-      background: white;
-      box-shadow: var(--shadow);
-    }
-
-    .section h2 {
-      margin-top: 0;
-      font-size: 20px;
-    }
-
-    .section-description {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .transaction-form {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 15px;
-    }
-
-    .form-actions {
-      grid-column: 1 / -1;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .table-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 15px;
-    }
-
-    .table-toolbar input {
-      max-width: 330px;
-    }
-
-    .table-wrap {
-      width: 100%;
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 680px;
-    }
-
-    th,
-    td {
-      padding: 13px 12px;
-      border-bottom: 1px solid var(--border);
-      text-align: left;
-      font-size: 14px;
-    }
-
-    th {
-      background: #f0fdf4;
-      color: var(--green-dark);
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 5px 9px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .badge-income {
-      color: #166534;
-      background: #dcfce7;
-    }
-
-    .badge-expense {
-      color: #991b1b;
-      background: #fee2e2;
-    }
-
-    .small-button {
-      border: 0;
-      border-radius: 7px;
-      padding: 7px 10px;
-      background: #fee2e2;
-      color: #991b1b;
-      font-weight: 700;
-    }
-
-    .empty-state {
-      padding: 28px;
-      text-align: center;
-      color: var(--muted);
-    }
-
-    .footer {
-      text-align: center;
-      padding: 25px 12px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    @media (max-width: 850px) {
-      .dashboard-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .app-header {
-        align-items: flex-start;
-      }
-    }
-
-    @media (max-width: 560px) {
-      .auth-card {
-        padding: 23px;
-      }
-
-      .app-header {
-        padding: 13px;
-      }
-
-      .app-header .brand {
-        font-size: 19px;
-      }
-
-      .user-info {
-        display: none;
-      }
-
-      .header-right {
-        gap: 6px;
-      }
-
-      .header-right .btn {
-        padding: 9px;
-        font-size: 12px;
-      }
-
-      .container {
-        width: 94%;
-        margin-top: 18px;
-      }
-
-      .dashboard-grid {
-        gap: 10px;
-      }
-
-      .stat-card {
-        padding: 14px;
-      }
-
-      .section {
-        padding: 15px;
-      }
-
-      .transaction-form {
-        grid-template-columns: 1fr;
-      }
-
-      .form-actions {
-        grid-column: auto;
-      }
-    }
-
-    @media print {
-      .no-print,
-      .app-header,
-      #transactionSection,
-      .delete-column {
-        display: none !important;
-      }
-
-      body {
-        background: white;
-      }
-
-      .container {
-        width: 100%;
-        margin: 0;
-      }
-
-      .section,
-      .stat-card {
-        box-shadow: none;
-      }
-
-      .dashboard-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#14532d">
+<title>I & E ShambaSmart</title>
+
+<style>
+:root {
+  --green:#166534;
+  --dark:#14532d;
+  --bg:#f1f5f1;
+  --white:#fff;
+  --border:#dce5dd;
+  --red:#b91c1c;
+  --muted:#647067;
+}
+* {box-sizing:border-box}
+body {
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:var(--bg);
+  color:#17251b;
+}
+button,input,select {font:inherit}
+button {cursor:pointer}
+.hidden {display:none!important}
+button:disabled {opacity:.6}
+.brand {font-size:22px;font-weight:800;color:var(--dark)}
+.brand span {color:#65a30d}
+.btn {
+  border:0;border-radius:9px;padding:11px 14px;
+  font-weight:700
+}
+.primary {background:var(--green);color:white}
+.light {background:#dcfce7;color:var(--dark)}
+.danger {background:#fee2e2;color:var(--red)}
+input,select {
+  width:100%;padding:12px;border:1px solid var(--border);
+  border-radius:9px;background:white
+}
+label {display:block;font-size:13px;font-weight:bold;margin-bottom:7px}
+.field {margin-bottom:14px}
+.auth {
+  min-height:100vh;display:flex;align-items:center;
+  justify-content:center;padding:20px;
+  background:linear-gradient(135deg,#dcfce7,#f8fafc)
+}
+.auth-card {
+  width:100%;max-width:420px;background:white;
+  border-radius:18px;padding:25px;
+  box-shadow:0 8px 25px #0001
+}
+.auth-card h1 {font-size:25px}
+.note {font-size:13px;color:var(--muted);line-height:1.6}
+.message {
+  padding:11px;border-radius:8px;margin:12px 0;
+  font-size:14px;overflow-wrap:anywhere
+}
+.error {background:#fee2e2;color:#991b1b}
+.success {background:#dcfce7;color:#166534}
+.info {background:#fef3c7;color:#92400e}
+.topbar {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;flex-wrap:wrap;background:white;padding:15px 4%;
+  border-bottom:1px solid var(--border)
+}
+.topright {display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.container {width:min(1200px,95%);margin:22px auto}
+.user-label {font-size:12px;color:var(--muted)}
+.layout {display:grid;grid-template-columns:210px minmax(0,1fr);gap:20px}
+.sidebar {
+  background:white;border:1px solid var(--border);
+  padding:12px;border-radius:13px;height:max-content
+}
+.navbtn {
+  display:block;width:100%;text-align:left;padding:12px;
+  margin:4px 0;border:0;border-radius:8px;background:white;
+  color:#25362a;font-weight:bold
+}
+.navbtn.active,.navbtn:hover {background:#dcfce7;color:var(--dark)}
+.content {min-width:0}
+.page {display:none}
+.page.active {display:block}
+h1 {font-size:27px}
+h2 {font-size:20px;margin-top:0}
+.muted {color:var(--muted);font-size:14px;line-height:1.6}
+.cards {
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:12px;margin-bottom:18px
+}
+.card,.panel {
+  background:white;border:1px solid var(--border);
+  border-radius:13px;padding:18px;min-width:0
+}
+.card .label {font-size:13px;color:var(--muted);margin-bottom:10px}
+.card .value {font-size:clamp(16px,2vw,24px);font-weight:800;overflow-wrap:anywhere}
+.green {color:var(--green)}
+.red {color:var(--red)}
+.formgrid {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.form-actions {display:flex;gap:8px;flex-wrap:wrap;grid-column:1/-1}
+.toolbar {display:flex;gap:9px;flex-wrap:wrap;justify-content:space-between;margin-bottom:13px}
+.toolbar input {max-width:300px}
+.tablewrap {overflow:auto}
+table {width:100%;border-collapse:collapse;min-width:650px}
+td,th {padding:11px;border-bottom:1px solid var(--border);text-align:left;font-size:13px}
+th {background:#f0fdf4;color:var(--dark)}
+.badge {padding:5px 8px;border-radius:20px;font-size:12px;font-weight:bold}
+.badge.income {background:#dcfce7;color:#166534}
+.badge.expense {background:#fee2e2;color:#991b1b}
+.smallbtn {border:0;border-radius:6px;padding:7px;background:#dcfce7;color:#14532d;font-weight:bold;margin:2px}
+.smallbtn.del {background:#fee2e2;color:#991b1b}
+.avatar {
+  width:90px;height:90px;border-radius:50%;object-fit:cover;
+  background:#dcfce7;border:2px solid var(--border)
+}
+.photo-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.photo-card {border:1px solid var(--border);border-radius:10px;padding:8px;background:white}
+.photo-card img {width:100%;height:150px;object-fit:cover;border-radius:7px}
+footer {text-align:center;color:var(--muted);font-size:12px;padding:25px 10px}
+@media(max-width:850px) {
+  .layout {grid-template-columns:1fr}
+  .sidebar {display:flex;overflow-x:auto;gap:5px}
+  .navbtn {width:auto;white-space:nowrap;margin:0}
+  .cards {grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:520px) {
+  .formgrid {grid-template-columns:1fr}
+  .form-actions {grid-column:auto}
+  .photo-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .card,.panel {padding:13px}
+}
+@media print {
+  .topbar,.sidebar,.no-print {display:none!important}
+  .layout {display:block}
+  .page {display:none!important}
+  #page-dashboard {display:block!important}
+  body {background:white}
+}
+</style>
 </head>
 
 <body>
 
-  <!-- LOGIN / SIGNUP -->
+<section id="authView" class="auth">
+  <div class="auth-card">
+    <div class="brand">I & E <span>ShambaSmart</span></div>
+    <h1 id="authTitle">Karibu ShambaSmart</h1>
+    <p class="muted" id="authIntro">Ingia au tengeneza akaunti yako.</p>
+    <div id="authMessage" class="hidden"></div>
 
-  <section id="authPage" class="auth-page">
-    <div class="auth-card">
-
-      <div class="brand">I & E <span>ShambaSmart</span></div>
-
-      <h1 id="authTitle">Karibu ShambaSmart</h1>
-
-      <p class="subtitle" id="authSubtitle">
-        Ingia kwenye akaunti yako ili kusimamia mapato na matumizi ya shamba.
-      </p>
-
-      <div id="authMessage" class="message hidden" role="status"></div>
-
-      <form id="loginForm">
-
-        <div id="nameGroup" class="form-group hidden">
-          <label for="fullName">Jina kamili</label>
-          <input
-            id="fullName"
-            type="text"
-            autocomplete="name"
-            placeholder="Andika jina lako"
-          >
-        </div>
-
-        <div class="form-group">
-          <label for="email">Barua pepe</label>
-          <input
-            id="email"
-            type="email"
-            autocomplete="email"
-            placeholder="mfano@email.com"
-            required
-          >
-        </div>
-
-        <div class="form-group">
-          <label for="password">Nenosiri</label>
-          <input
-            id="password"
-            type="password"
-            autocomplete="current-password"
-            minlength="6"
-            placeholder="Weka nenosiri"
-            required
-          >
-        </div>
-
-        <button
-          id="loginButton"
-          type="submit"
-          class="btn btn-primary btn-full"
-        >
-          Login
-        </button>
-
-      </form>
-
-      <div class="auth-links">
-        <button id="toggleAuthButton" class="text-button" type="button">
-          Fungua akaunti mpya
-        </button>
-
-        <button id="forgotPasswordButton" class="text-button" type="button">
-          Umesahau nenosiri?
-        </button>
+    <form id="authForm">
+      <div id="signupNameWrap" class="field hidden">
+        <label for="signupName">Jina kamili</label>
+        <input id="signupName" autocomplete="name">
       </div>
-
-      <p class="subtitle" style="margin-top:25px">
-        Project Owner: Ibrahim<br>
-        Project Supervisor: Esromu
-      </p>
-
-    </div>
-  </section>
-
-
-  <!-- MAIN APPLICATION -->
-
-  <div id="appPage" class="hidden">
-
-    <header class="app-header">
-
-      <div class="brand">I & E <span>ShambaSmart</span></div>
-
-      <div class="header-right">
-
-        <div class="user-info">
-          <strong id="headerUserName">Mtumiaji</strong>
-          <span id="headerUserEmail"></span>
-        </div>
-
-        <button id="languageButton" class="btn btn-light no-print">
-          English
-        </button>
-
-        <button id="logoutButton" class="btn btn-danger no-print">
-          Toka
-        </button>
-
+      <div class="field">
+        <label for="email">Barua pepe</label>
+        <input id="email" type="email" autocomplete="email" required>
       </div>
-    </header>
-
-
-    <main class="container">
-
-      <div class="welcome">
-        <h1 id="welcomeTitle">Karibu kwenye ShambaSmart</h1>
-        <p id="welcomeSubtitle" class="subtitle">
-          Simamia mapato, matumizi na salio lako sehemu moja.
-        </p>
+      <div class="field">
+        <label for="password">Nenosiri</label>
+        <input id="password" type="password" minlength="6"
+               autocomplete="current-password" required>
       </div>
+      <button id="authSubmit" class="btn primary" style="width:100%">
+        Login
+      </button>
+    </form>
 
-
-      <!-- DASHBOARD -->
-
-      <section class="dashboard-grid">
-
-        <article class="stat-card">
-          <div id="incomeLabel" class="stat-label">Jumla ya mapato</div>
-          <div id="totalIncome" class="stat-value green">TZS 0</div>
-        </article>
-
-        <article class="stat-card">
-          <div id="expenseLabel" class="stat-label">Jumla ya matumizi</div>
-          <div id="totalExpenses" class="stat-value red">TZS 0</div>
-        </article>
-
-        <article class="stat-card">
-          <div id="balanceLabel" class="stat-label">Salio</div>
-          <div id="totalBalance" class="stat-value">TZS 0</div>
-        </article>
-
-        <article class="stat-card">
-          <div id="countLabel" class="stat-label">Idadi ya miamala</div>
-          <div id="transactionCount" class="stat-value">0</div>
-        </article>
-
-      </section>
-
-
-      <!-- ADD TRANSACTION -->
-
-      <section id="transactionSection" class="section">
-
-        <h2 id="formTitle">Ongeza muamala</h2>
-
-        <p id="formDescription" class="section-description">
-          Rekodi fedha zilizoingia au zilizotumika.
-        </p>
-
-        <div id="transactionMessage" class="message hidden" role="status"></div>
-
-        <form id="transactionForm" class="transaction-form">
-
-          <div class="form-group">
-            <label id="typeLabel" for="transactionType">Aina ya muamala</label>
-
-            <select id="transactionType" required>
-              <option value="income">Mapato</option>
-              <option value="expense">Matumizi</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label id="dateLabel" for="transactionDate">Tarehe</label>
-
-            <input
-              id="transactionDate"
-              type="date"
-              required
-            >
-          </div>
-
-          <div class="form-group">
-            <label id="descriptionLabel" for="description">
-              Maelezo
-            </label>
-
-            <input
-              id="description"
-              type="text"
-              maxlength="150"
-              placeholder="Mfano: Mauzo ya mahindi"
-              required
-            >
-          </div>
-
-          <div class="form-group">
-            <label id="personLabel" for="person">Mhusika / Mteja</label>
-
-            <input
-              id="person"
-              type="text"
-              maxlength="100"
-              placeholder="Jina la mteja au mhusika"
-            >
-          </div>
-
-          <div class="form-group">
-            <label id="amountLabel" for="amount">
-              Kiasi (TZS)
-            </label>
-
-            <input
-              id="amount"
-              type="number"
-              min="1"
-              step="1"
-              inputmode="numeric"
-              placeholder="Mfano: 50000"
-              required
-            >
-          </div>
-
-          <div class="form-actions">
-
-            <button
-              id="saveTransactionButton"
-              type="submit"
-              class="btn btn-primary"
-            >
-              Hifadhi muamala
-            </button>
-
-            <button
-              id="clearFormButton"
-              type="button"
-              class="btn btn-light"
-            >
-              Futa fomu
-            </button>
-
-          </div>
-
-        </form>
-
-      </section>
-
-
-      <!-- TRANSACTION HISTORY -->
-
-      <section class="section">
-
-        <h2 id="historyTitle">Historia ya miamala</h2>
-
-        <p id="historyDescription" class="section-description">
-          Hapa utaona miamala ya akaunti yako.
-        </p>
-
-        <div class="table-toolbar no-print">
-
-          <input
-            id="searchTransactions"
-            type="search"
-            placeholder="Tafuta muamala..."
-          >
-
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-
-            <button id="csvButton" class="btn btn-light" type="button">
-              Pakua CSV
-            </button>
-
-            <button id="printButton" class="btn btn-primary" type="button">
-              Chapisha / PDF
-            </button>
-
-          </div>
-
-        </div>
-
-        <div id="loadingMessage" class="message hidden" role="status"></div>
-
-        <div class="table-wrap">
-
-          <table>
-
-            <thead>
-              <tr>
-                <th id="thDate">Tarehe</th>
-                <th id="thType">Aina</th>
-                <th id="thDescription">Maelezo</th>
-                <th id="thPerson">Mhusika</th>
-                <th id="thAmount">Kiasi</th>
-                <th class="delete-column no-print" id="thAction">Hatua</th>
-              </tr>
-            </thead>
-
-            <tbody id="transactionsBody"></tbody>
-
-          </table>
-
-        </div>
-
-        <div id="emptyTransactions" class="empty-state">
-          Bado hakuna miamala. Ongeza muamala wa kwanza.
-        </div>
-
-      </section>
-
-
-      <footer class="footer">
-        <strong>I & E ShambaSmart</strong><br>
-        Project Owner: Ibrahim | Project Supervisor: Esromu<br>
-        © <span id="currentYear"></span> ShambaSmart
-      </footer>
-
-    </main>
-
+    <p>
+      <button id="toggleSignup" class="smallbtn">Fungua akaunti mpya</button>
+      <button id="resetPassword" class="smallbtn">Umesahau nenosiri?</button>
+    </p>
+    <p class="note">Taarifa za Project Owner na Supervisor zinaonekana ndani baada ya login.</p>
   </div>
-
-
-  <!-- FIREBASE AND APPLICATION LOGIC -->
-
-  <script type="module">
-
-    import {
-      initializeApp
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      sendPasswordResetEmail,
-      onAuthStateChanged,
-      updateProfile,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
-
-    import {
-      getFirestore,
-      doc,
-      getDoc,
-      setDoc,
-      collection,
-      addDoc,
-      getDocs,
-      query,
-      where,
-      deleteDoc,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
-
-    // FIREBASE CONFIGURATION
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyB8yfl5dkqoN-skeAAJtOwULc_iTyr9tPk",
-      authDomain: "ie-shambasmart.firebaseapp.com",
-      projectId: "ie-shambasmart",
-      storageBucket: "ie-shambasmart.firebasestorage.app",
-      messagingSenderId: "895715686352",
-      appId: "1:895715686352:web:baa408a762fd60f9cf6bd5",
-      measurementId: "G-37FEVMD62V"
-    };
-
-
-    const firebaseApp = initializeApp(firebaseConfig);
-    const auth = getAuth(firebaseApp);
-    const db = getFirestore(firebaseApp);
-
-
-    // APPLICATION STATE
-
-    let currentUser = null;
-    let transactions = [];
-    let isSignup = false;
-    let language = "sw";
-
-
-    // SHORTCUTS
-
-    const $ = (id) => document.getElementById(id);
-
-    const authPage = $("authPage");
-    const appPage = $("appPage");
-
-    const loginForm = $("loginForm");
-    const loginButton = $("loginButton");
-
-    const authMessage = $("authMessage");
-    const transactionMessage = $("transactionMessage");
-
-    $("currentYear").textContent = new Date().getFullYear();
-
-
-    // TRANSLATIONS
-
-    const translations = {
-
-      sw: {
-        authTitle: "Karibu ShambaSmart",
-        authSubtitle: "Ingia kwenye akaunti yako ili kusimamia mapato na matumizi ya shamba.",
-        login: "Login",
-        signingIn: "Inaingia...",
-        signup: "Fungua akaunti mpya",
-        createAccount: "Tengeneza akaunti",
-        creatingAccount: "Inatengeneza akaunti...",
-        name: "Jina kamili",
-        email: "Barua pepe",
-        password: "Nenosiri",
-        forgot: "Umesahau nenosiri?",
-        welcome: "Karibu kwenye ShambaSmart",
-        welcomeSubtitle: "Simamia mapato, matumizi na salio lako sehemu moja.",
-        income: "Jumla ya mapato",
-        expenses: "Jumla ya matumizi",
-        balance: "Salio",
-        count: "Idadi ya miamala",
-        formTitle: "Ongeza muamala",
-        formDescription: "Rekodi fedha zilizoingia au zilizotumika.",
-        type: "Aina ya muamala",
-        date: "Tarehe",
-        description: "Maelezo",
-        person: "Mhusika / Mteja",
-        amount: "Kiasi (TZS)",
-        save: "Hifadhi muamala",
-        saving: "Inahifadhi...",
-        clear: "Futa fomu",
-        history: "Historia ya miamala",
-        historyDescription: "Hapa utaona miamala ya akaunti yako.",
-        search: "Tafuta muamala...",
-        csv: "Pakua CSV",
-        print: "Chapisha / PDF",
-        thDate: "Tarehe",
-        thType: "Aina",
-        thDescription: "Maelezo",
-        thPerson: "Mhusika",
-        thAmount: "Kiasi",
-        thAction: "Hatua",
-        incomeOption: "Mapato",
-        expenseOption: "Matumizi",
-        logout: "Toka",
-        empty: "Bado hakuna miamala. Ongeza muamala wa kwanza.",
-        delete: "Futa",
-        confirmDelete: "Una uhakika unataka kufuta muamala huu?",
-        loginSuccess: "Umeingia kwenye akaunti yako.",
-        signupSuccess: "Akaunti imetengenezwa. Karibu ShambaSmart.",
-        transactionSaved: "Muamala umehifadhiwa.",
-        transactionDeleted: "Muamala umefutwa.",
-        csvEmpty: "Hakuna miamala ya kupakua.",
-        csvSuccess: "Ripoti ya CSV imepakuliwa.",
-        enterEmail: "Weka barua pepe yako kwanza.",
-        resetSent: "Maelekezo ya kubadilisha nenosiri yametumwa kwenye barua pepe yako.",
-        invalidAmount: "Kiasi lazima kiwe zaidi ya sifuri.",
-        loadError: "Imeshindikana kupakia data. Angalia intaneti na ruhusa za Firestore.",
-        savingError: "Imeshindikana kuhifadhi. Jaribu tena.",
-        noPermission: "Huna ruhusa ya kufanya kitendo hiki.",
-        profileWarning: "Akaunti imefunguliwa, lakini taarifa za profaili hazijahifadhiwa kikamilifu.",
-        user: "Mtumiaji"
-      },
-
-      en: {
-        authTitle: "Welcome to ShambaSmart",
-        authSubtitle: "Sign in to manage your farm income and expenses.",
-        login: "Login",
-        signingIn: "Signing in...",
-        signup: "Create a new account",
-        createAccount: "Create account",
-        creatingAccount: "Creating account...",
-        name: "Full name",
-        email: "Email address",
-        password: "Password",
-        forgot: "Forgot password?",
-        welcome: "Welcome to ShambaSmart",
-        welcomeSubtitle: "Manage income, expenses and your balance in one place.",
-        income: "Total income",
-        expenses: "Total expenses",
-        balance: "Balance",
-        count: "Transactions",
-        formTitle: "Add transaction",
-        formDescription: "Record money received or spent.",
-        type: "Transaction type",
-        date: "Date",
-        description: "Description",
-        person: "Person / Customer",
-        amount: "Amount (TZS)",
-        save: "Save transaction",
-        saving: "Saving...",
-        clear: "Clear form",
-        history: "Transaction history",
-        historyDescription: "Your account transactions appear here.",
-        search: "Search transactions...",
-        csv: "Download CSV",
-        print: "Print / PDF",
-        thDate: "Date",
-        thType: "Type",
-        thDescription: "Description",
-        thPerson: "Person",
-        thAmount: "Amount",
-        thAction: "Action",
-        incomeOption: "Income",
-        expenseOption: "Expense",
-        logout: "Logout",
-        empty: "No transactions yet. Add your first transaction.",
-        delete: "Delete",
-        confirmDelete: "Are you sure you want to delete this transaction?",
-        loginSuccess: "You are signed in.",
-        signupSuccess: "Account created. Welcome to ShambaSmart.",
-        transactionSaved: "Transaction saved.",
-        transactionDeleted: "Transaction deleted.",
-        csvEmpty: "There are no transactions to download.",
-        csvSuccess: "CSV report downloaded.",
-        enterEmail: "Enter your email address first.",
-        resetSent: "Password reset instructions have been sent to your email.",
-        invalidAmount: "The amount must be greater than zero.",
-        loadError: "Could not load data. Check your internet connection and Firestore permissions.",
-        savingError: "Could not save. Please try again.",
-        noPermission: "You are not allowed to perform this action.",
-        profileWarning: "Account created, but the profile could not be fully saved.",
-        user: "User"
-      }
-
-    };
-
-
-    function t(key) {
-      return translations[language][key] || key;
-    }
-
-
-    // MESSAGE DISPLAY
-
-    function showMessage(element, message, type = "info") {
-      element.textContent = message;
-      element.className = "message " + type;
-      element.classList.remove("hidden");
-    }
-
-
-    function hideMessage(element) {
-      element.textContent = "";
-      element.className = "message hidden";
-    }
-
-
-    // FIREBASE ERROR MESSAGES
-
-    function readableFirebaseError(error) {
-
-      const code = error?.code || "";
-
-      const messages = {
-        "auth/invalid-email": "Barua pepe si sahihi.",
-        "auth/user-not-found": "Akaunti haijapatikana. Hakikisha barua pepe ni sahihi.",
-        "auth/wrong-password": "Nenosiri si sahihi.",
-        "auth/invalid-credential": "Barua pepe au nenosiri si sahihi.",
-        "auth/invalid-login-credentials": "Barua pepe au nenosiri si sahihi.",
-        "auth/email-already-in-use": "Barua pepe hii tayari imesajiliwa.",
-        "auth/weak-password": "Nenosiri ni dhaifu. Tumia angalau herufi 6.",
-        "auth/operation-not-allowed": "Email/Password haijawashwa kwenye Firebase Authentication.",
-        "auth/network-request-failed": "Tatizo la intaneti. Angalia muunganisho wako.",
-        "auth/too-many-requests": "Majaribio ni mengi sana. Subiri kidogo kisha ujaribu tena.",
-        "auth/unauthorized-domain": "Domain hii haijaidhinishwa kwenye Firebase Authentication.",
-        "permission-denied": "Firestore imekataa ruhusa. Angalia Firestore Security Rules."
-      };
-
-      if (messages[code]) {
-        return messages[code];
-      }
-
-      return error?.message || "Hitilafu isiyojulikana imetokea.";
-    }
-
-
-    // AUTH PAGE MODE
-
-    function setAuthMode(signup) {
-
-      isSignup = signup;
-
-      hideMessage(authMessage);
-
-      $("nameGroup").classList.toggle("hidden", !signup);
-
-      $("fullName").required = signup;
-
-      $("password").autocomplete = signup
-        ? "new-password"
-        : "current-password";
-
-      $("authTitle").textContent = signup
-        ? t("createAccount")
-        : t("authTitle");
-
-      $("authSubtitle").textContent = signup
-        ? "Tengeneza akaunti yako ya ShambaSmart."
-        : t("authSubtitle");
-
-      loginButton.textContent = signup
-        ? t("createAccount")
-        : t("login");
-
-      $("toggleAuthButton").textContent = signup
-        ? "Tayari una akaunti? Login"
-        : t("signup");
-
-      $("forgotPasswordButton").classList.toggle("hidden", signup);
-    }
-
-
-    $("toggleAuthButton").addEventListener("click", () => {
-      setAuthMode(!isSignup);
-    });
-
-
-    // LOGIN AND SIGNUP
-    // The form submit event works with the button and Enter key.
-
-    loginForm.addEventListener("submit", async (event) => {
-
-      event.preventDefault();
-
-      hideMessage(authMessage);
-
-      const email = $("email").value.trim();
-      const password = $("password").value;
-      const fullName = $("fullName").value.trim();
-
-      if (!email || !password) {
-        showMessage(authMessage, "Weka barua pepe na nenosiri.", "error");
-        return;
-      }
-
-      if (isSignup && !fullName) {
-        showMessage(authMessage, "Weka jina lako kamili.", "error");
-        return;
-      }
-
-      if (isSignup && password.length < 6) {
-        showMessage(
-          authMessage,
-          "Nenosiri lazima liwe na angalau herufi 6.",
-          "error"
-        );
-        return;
-      }
-
-      loginButton.disabled = true;
-      loginButton.textContent = isSignup
-        ? t("creatingAccount")
-        : t("signingIn");
-
-      try {
-
-        if (isSignup) {
-
-          const credential = await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
-
-          const newUser = credential.user;
-
-          try {
-
-            await updateProfile(newUser, {
-              displayName: fullName
-            });
-
-            await setDoc(
-              doc(db, "users", newUser.uid),
-              {
-                uid: newUser.uid,
-                name: fullName,
-                email: email,
-                role: "user",
-                createdAt: serverTimestamp()
-              }
-            );
-
-          } catch (profileError) {
-
-            console.error("Profile save error:", profileError);
-
-            // The Firebase Auth account has already been created.
-            // Never assign admin permissions automatically.
-
-            showMessage(
-              authMessage,
-              t("profileWarning"),
-              "info"
-            );
-
-          }
-
-        } else {
-
-          await signInWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
-
-        }
-
-        // onAuthStateChanged will display the app.
-
-      } catch (error) {
-
-        console.error("Authentication error:", error);
-
-        showMessage(
-          authMessage,
-          readableFirebaseError(error),
-          "error"
-        );
-
-      } finally {
-
-        loginButton.disabled = false;
-        loginButton.textContent = isSignup
-          ? t("createAccount")
-          : t("login");
-
-      }
-
-    });
-
-
-    // PASSWORD RESET
-
-    $("forgotPasswordButton").addEventListener("click", async () => {
-
-      hideMessage(authMessage);
-
-      const email = $("email").value.trim();
-
-      if (!email) {
-        showMessage(authMessage, t("enterEmail"), "info");
-        $("email").focus();
-        return;
-      }
-
-      try {
-
-        await sendPasswordResetEmail(auth, email);
-
-        showMessage(
-          authMessage,
-          t("resetSent"),
-          "success"
-        );
-
-      } catch (error) {
-
-        console.error("Password reset error:", error);
-
-        showMessage(
-          authMessage,
-          readableFirebaseError(error),
-          "error"
-        );
-
-      }
-
-    });
-
-
-    // LOGOUT
-
-    $("logoutButton").addEventListener("click", async () => {
-
-      try {
-        await signOut(auth);
-      } catch (error) {
-        alert(readableFirebaseError(error));
-      }
-
-    });
-
-
-    // AUTH STATE
-
-    onAuthStateChanged(auth, async (user) => {
-
-      if (user) {
-
-        currentUser = user;
-
-        authPage.classList.add("hidden");
-        appPage.classList.remove("hidden");
-
-        await showCurrentUser();
-        await loadTransactions();
-
-      } else {
-
-        currentUser = null;
-        transactions = [];
-
-        appPage.classList.add("hidden");
-        authPage.classList.remove("hidden");
-
-        $("transactionsBody").replaceChildren();
-
-        updateDashboard();
-
-        setAuthMode(isSignup);
-
-      }
-
-    });
-
-
-    // DISPLAY USER NAME
-
-    async function showCurrentUser() {
-
-      if (!currentUser) return;
-
-      let displayName =
-        currentUser.displayName ||
-        currentUser.email?.split("@")[0] ||
-        t("user");
-
-      try {
-
-        const profileSnapshot = await getDoc(
-          doc(db, "users", currentUser.uid)
-        );
-
-        if (profileSnapshot.exists()) {
-
-          const profile = profileSnapshot.data();
-
-          if (profile.name) {
-            displayName = profile.name;
-          }
-
-        }
-
-      } catch (error) {
-
-        console.warn("Profile could not be loaded:", error);
-
-      }
-
-      $("headerUserName").textContent = displayName;
-      $("headerUserEmail").textContent = currentUser.email || "";
-
-      $("welcomeTitle").textContent =
-        `${t("welcome")}, ${displayName}`;
-
-    }
-
-
-    // TRANSACTION FORM
-
-    $("transactionDate").value =
-      new Date().toLocaleDateString("en-CA");
-
-
-    $("clearFormButton").addEventListener("click", () => {
-
-      $("transactionForm").reset();
-
-      $("transactionDate").value =
-        new Date().toLocaleDateString("en-CA");
-
-      hideMessage(transactionMessage);
-
-    });
-
-
-    $("transactionForm").addEventListener("submit", async (event) => {
-
-      event.preventDefault();
-
-      hideMessage(transactionMessage);
-
-      if (!currentUser) {
-        showMessage(transactionMessage, "Ingia kwanza.", "error");
-        return;
-      }
-
-      const type = $("transactionType").value;
-      const date = $("transactionDate").value;
-      const description = $("description").value.trim();
-      const person = $("person").value.trim();
-      const amount = Number($("amount").value);
-
-      if (!date || !description || !Number.isFinite(amount) || amount <= 0) {
-
-        showMessage(
-          transactionMessage,
-          t("invalidAmount"),
-          "error"
-        );
-
-        return;
-      }
-
-      const saveButton = $("saveTransactionButton");
-
-      saveButton.disabled = true;
-      saveButton.textContent = t("saving");
-
-      try {
-
-        await addDoc(
-          collection(db, "transactions"),
-          {
-            uid: currentUser.uid,
-            date: date,
-            type: type,
-            description: description,
-            person: person,
-            amount: amount,
-            createdAt: serverTimestamp()
-          }
-        );
-
-        $("transactionForm").reset();
-
-        $("transactionDate").value =
-          new Date().toLocaleDateString("en-CA");
-
-        showMessage(
-          transactionMessage,
-          t("transactionSaved"),
-          "success"
-        );
-
-        await loadTransactions();
-
-      } catch (error) {
-
-        console.error("Transaction save error:", error);
-
-        showMessage(
-          transactionMessage,
-          readableFirebaseError(error),
-          "error"
-        );
-
-      } finally {
-
-        saveButton.disabled = false;
-        saveButton.textContent = t("save");
-
-      }
-
-    });
-
-
-    // LOAD CURRENT USER TRANSACTIONS
-
-    async function loadTransactions() {
-
-      if (!currentUser) return;
-
-      $("loadingMessage").textContent =
-        "Inapakia miamala...";
-
-      $("loadingMessage").className = "message info";
-
-      try {
-
-        const transactionQuery = query(
-          collection(db, "transactions"),
-          where("uid", "==", currentUser.uid)
-        );
-
-        const snapshot = await getDocs(transactionQuery);
-
-        transactions = snapshot.docs.map((item) => ({
-          id: item.id,
-          ...item.data()
-        }));
-
-        transactions.sort((a, b) => {
-          const dateCompare =
-            String(b.date || "").localeCompare(String(a.date || ""));
-
-          if (dateCompare !== 0) {
-            return dateCompare;
-          }
-
-          return (b.createdAt?.seconds || 0) -
-                 (a.createdAt?.seconds || 0);
-        });
-
-        updateDashboard();
-        renderTransactions();
-
-        hideMessage($("loadingMessage"));
-
-      } catch (error) {
-
-        console.error("Load transactions error:", error);
-
-        showMessage(
-          $("loadingMessage"),
-          readableFirebaseError(error),
-          "error"
-        );
-
-      }
-
-    }
-
-
-    // CURRENCY FORMAT
-
-    function formatMoney(value) {
-
-      return new Intl.NumberFormat("sw-TZ", {
-        style: "currency",
-        currency: "TZS",
-        maximumFractionDigits: 0
-      }).format(value || 0);
-
-    }
-
-
-    // DASHBOARD TOTALS
-
-    function updateDashboard() {
-
-      const income = transactions
-        .filter(item => item.type === "income")
-        .reduce((sum, item) => sum + Number(item.amount || 0), 0);
-
-      const expenses = transactions
-        .filter(item => item.type === "expense")
-        .reduce((sum, item) => sum + Number(item.amount || 0), 0);
-
-      const balance = income - expenses;
-
-      $("totalIncome").textContent = formatMoney(income);
-      $("totalExpenses").textContent = formatMoney(expenses);
-      $("totalBalance").textContent = formatMoney(balance);
-      $("transactionCount").textContent = transactions.length;
-
-      $("totalBalance").className =
-        "stat-value " + (balance < 0 ? "red" : "green");
-
-    }
-
-
-    // RENDER TRANSACTION TABLE
-
-    function renderTransactions() {
-
-      const search = $("searchTransactions").value
-        .trim()
-        .toLowerCase();
-
-      const filtered = transactions.filter(item => {
-
-        const searchableText = [
-          item.date,
-          item.type,
-          item.description,
-          item.person,
-          item.amount
-        ].join(" ").toLowerCase();
-
-        return searchableText.includes(search);
-
+</section>
+
+<section id="appView" class="hidden">
+  <header class="topbar">
+    <div class="brand">I & E <span>ShambaSmart</span></div>
+    <div class="topright">
+      <div>
+        <strong id="topName">Mtumiaji</strong>
+        <div id="topEmail" class="user-label"></div>
+      </div>
+      <button id="langToggle" class="btn light">English</button>
+      <button id="logout" class="btn danger">Logout</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="layout">
+
+      <nav class="sidebar no-print">
+        <button class="navbtn active" data-page="dashboard">🏠 Dashboard</button>
+        <button class="navbtn" data-page="transactions">💰 Transactions</button>
+        <button class="navbtn" data-page="reports">📊 Reports</button>
+        <button class="navbtn" data-page="photos">🖼️ Photos</button>
+        <button class="navbtn" data-page="account">👤 My Account</button>
+        <button class="navbtn" data-page="settings">⚙️ Settings</button>
+      </nav>
+
+      <div class="content">
+
+        <section id="page-dashboard" class="page active">
+          <h1 data-sw="Dashboard" data-en="Dashboard">Dashboard</h1>
+          <p class="muted" data-sw="Muhtasari wa shughuli za shamba lako."
+             data-en="Your farm activity summary.">Muhtasari wa shughuli za shamba lako.</p>
+
+          <div class="cards">
+            <div class="card">
+              <div class="label" data-sw="Jumla ya mapato" data-en="Total income">Jumla ya mapato</div>
+              <div id="incomeTotal" class="value green">TZS 0</div>
+            </div>
+            <div class="card">
+              <div class="label" data-sw="Jumla ya matumizi" data-en="Total expenses">Jumla ya matumizi</div>
+              <div id="expenseTotal" class="value red">TZS 0</div>
+            </div>
+            <div class="card">
+              <div class="label" data-sw="Salio" data-en="Balance">Salio</div>
+              <div id="balanceTotal" class="value">TZS 0</div>
+            </div>
+            <div class="card">
+              <div class="label" data-sw="Idadi ya miamala" data-en="Transactions">Idadi ya miamala</div>
+              <div id="countTotal" class="value">0</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2 data-sw="Taarifa za mradi" data-en="Project information">Taarifa za mradi</h2>
+            <p><strong>Project Owner:</strong> Ibrahim</p>
+            <p><strong>Project Supervisor:</strong> Esromu</p>
+          </div>
+
+          <div class="panel" style="margin-top:15px">
+            <h2 data-sw="Miamala ya hivi karibuni" data-en="Recent transactions">Miamala ya hivi karibuni</h2>
+            <div id="recentTransactions" class="muted">Hakuna miamala bado.</div>
+          </div>
+        </section>
+
+        <section id="page-transactions" class="page">
+          <h1 data-sw="Miamala" data-en="Transactions">Miamala</h1>
+          <div class="panel">
+            <h2 id="transactionFormTitle">Ongeza muamala</h2>
+            <div id="transactionMessage" class="hidden"></div>
+            <form id="transactionForm" class="formgrid">
+              <input id="editId" type="hidden">
+              <div>
+                <label for="type">Aina</label>
+                <select id="type">
+                  <option value="income">Mapato / Income</option>
+                  <option value="expense">Matumizi / Expense</option>
+                </select>
+              </div>
+              <div>
+                <label for="date">Tarehe</label>
+                <input id="date" type="date" required>
+              </div>
+              <div>
+                <label for="description">Maelezo</label>
+                <input id="description" maxlength="150" required>
+              </div>
+              <div>
+                <label for="person">Mhusika / Mteja</label>
+                <input id="person" maxlength="100">
+              </div>
+              <div>
+                <label for="amount">Kiasi (TZS)</label>
+                <input id="amount" type="number" min="1" step="1" required>
+              </div>
+              <div class="form-actions">
+                <button id="saveTransaction" class="btn primary">Hifadhi</button>
+                <button id="cancelEdit" type="button" class="btn light">Futa fomu</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel" style="margin-top:15px">
+            <div class="toolbar">
+              <input id="search" type="search" placeholder="Tafuta miamala...">
+              <button id="exportCsv" class="btn light">Pakua CSV</button>
+            </div>
+            <div class="tablewrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Tarehe</th><th>Aina</th><th>Maelezo</th>
+                    <th>Mhusika</th><th>Kiasi</th><th class="no-print">Hatua</th>
+                  </tr>
+                </thead>
+                <tbody id="transactionRows"></tbody>
+              </table>
+            </div>
+            <p id="noTransactions" class="muted">Hakuna miamala bado.</p>
+          </div>
+        </section>
+
+        <section id="page-reports" class="page">
+          <h1 data-sw="Ripoti" data-en="Reports">Ripoti</h1>
+          <div class="panel">
+            <p class="muted" data-sw="Pakua ripoti ya miamala au hifadhi ripoti kama PDF."
+               data-en="Download transactions or save a report as PDF.">
+              Pakua ripoti ya miamala au hifadhi ripoti kama PDF.
+            </p>
+            <button id="reportCsv" class="btn primary">Pakua CSV</button>
+            <button id="reportPdf" class="btn light">Chapisha / Hifadhi PDF</button>
+          </div>
+        </section>
+
+        <section id="page-photos" class="page">
+          <h1 data-sw="Picha za shamba" data-en="Farm photos">Picha za shamba</h1>
+          <div class="panel">
+            <p class="muted">Chagua picha kutoka kwenye simu. Picha zitahifadhiwa kwenye Firebase Storage.</p>
+            <label for="photoInput">Chagua picha</label>
+            <input id="photoInput" type="file" accept="image/*">
+            <button id="uploadPhoto" class="btn primary" style="margin-top:12px">Pakia picha</button>
+            <div id="photoMessage" class="hidden"></div>
+          </div>
+          <div class="panel" style="margin-top:15px">
+            <h2 data-sw="Picha zilizopakiwa" data-en="Uploaded photos">Picha zilizopakiwa</h2>
+            <div id="photoGrid" class="photo-grid"></div>
+            <p id="noPhotos" class="muted">Hakuna picha zilizopakiwa bado.</p>
+          </div>
+        </section>
+
+        <section id="page-account" class="page">
+          <h1 data-sw="Akaunti yangu" data-en="My Account">Akaunti yangu</h1>
+          <div class="panel">
+            <img id="avatar" class="avatar" alt="Picha ya profaili">
+            <div style="margin:12px 0">
+              <label for="avatarInput">Picha ya profaili</label>
+              <input id="avatarInput" type="file" accept="image/*">
+              <button id="uploadAvatar" class="btn light" style="margin-top:8px">Badilisha picha</button>
+            </div>
+            <form id="profileForm">
+              <div class="field">
+                <label for="profileName">Jina kamili</label>
+                <input id="profileName" maxlength="100" required>
+              </div>
+              <div class="field">
+                <label for="profileEmail">Barua pepe</label>
+                <input id="profileEmail" type="email" disabled>
+              </div>
+              <button class="btn primary">Hifadhi taarifa</button>
+            </form>
+            <div id="profileMessage" class="hidden"></div>
+            <hr style="border:0;border-top:1px solid var(--border);margin:20px 0">
+            <h2>Badilisha nenosiri</h2>
+            <p class="muted">Tuma maelekezo ya kubadilisha nenosiri kwenye barua pepe yako.</p>
+            <button id="accountPasswordReset" class="btn light">Tuma maelekezo</button>
+          </div>
+        </section>
+
+        <section id="page-settings" class="page">
+          <h1 data-sw="Mipangilio" data-en="Settings">Mipangilio</h1>
+          <div class="panel">
+            <h2 data-sw="Lugha" data-en="Language">Lugha</h2>
+            <label for="languageSelect" data-sw="Chagua lugha" data-en="Choose language">Chagua lugha</label>
+            <select id="languageSelect">
+              <option value="sw">Kiswahili</option>
+              <option value="en">English</option>
+            </select>
+            <p class="muted">Lugha unayochagua itahifadhiwa kwenye kifaa hiki.</p>
+          </div>
+          <div class="panel" style="margin-top:15px">
+            <h2>Project information</h2>
+            <p><strong>Project Owner:</strong> Ibrahim</p>
+            <p><strong>Project Supervisor:</strong> Esromu</p>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    I & E ShambaSmart · <span id="year"></span>
+  </footer>
+</section>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  onAuthStateChanged, signOut, updateProfile, sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, setDoc, collection, addDoc, getDocs,
+  query, where, updateDoc, deleteDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import {
+  getStorage, ref, uploadBytes, getDownloadURL, deleteObject
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+
+/* Firebase project configuration */
+const firebaseConfig = {
+  apiKey: "AIzaSyB8yfl5dkqoN-skeAAJtOwULc_iTyr9tPk",
+  authDomain: "ie-shambasmart.firebaseapp.com",
+  projectId: "ie-shambasmart",
+  storageBucket: "ie-shambasmart.firebasestorage.app",
+  messagingSenderId: "895715686352",
+  appId: "1:895715686352:web:baa408a762fd60f9cf6bd5",
+  measurementId: "G-37FEVMD62V"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+let user = null;
+let items = [];
+let photos = [];
+let signupMode = false;
+let lang = localStorage.getItem("shambasmart-language") || "sw";
+
+const $ = id => document.getElementById(id);
+
+$("year").textContent = new Date().getFullYear();
+$("date").value = new Date().toISOString().slice(0,10);
+
+function message(id, text, type="info") {
+  const el = $(id);
+  el.textContent = text;
+  el.className = "message " + type;
+}
+function clearMessage(id) {
+  $(id).textContent = "";
+  $(id).className = "hidden";
+}
+function errText(e) {
+  const errors = {
+    "auth/invalid-email":"Barua pepe si sahihi.",
+    "auth/invalid-credential":"Barua pepe au nenosiri si sahihi.",
+    "auth/wrong-password":"Nenosiri si sahihi.",
+    "auth/user-not-found":"Akaunti haijapatikana.",
+    "auth/email-already-in-use":"Barua pepe hii imeshasajiliwa.",
+    "auth/weak-password":"Tumia nenosiri lenye angalau herufi 6.",
+    "auth/operation-not-allowed":"Washa Email/Password kwenye Firebase Authentication.",
+    "auth/network-request-failed":"Tatizo la intaneti.",
+    "auth/unauthorized-domain":"Domain haijaidhinishwa kwenye Firebase.",
+    "permission-denied":"Firestore Rules zimekataa ruhusa.",
+    "storage/unauthorized":"Storage Rules zimekataa ruhusa ya picha.",
+    "storage/canceled":"Upakiaji wa picha umefutwa."
+  };
+  return errors[e.code] || e.message || "Hitilafu imetokea.";
+}
+
+$("toggleSignup").addEventListener("click", () => {
+  signupMode = !signupMode;
+  $("signupNameWrap").classList.toggle("hidden", !signupMode);
+  $("signupName").required = signupMode;
+  $("authTitle").textContent = signupMode ? "Fungua akaunti" : "Karibu ShambaSmart";
+  $("authSubmit").textContent = signupMode ? "Jisajili" : "Login";
+  $("toggleSignup").textContent = signupMode ? "Nina akaunti tayari: Login" : "Fungua akaunti mpya";
+  $("password").autocomplete = signupMode ? "new-password" : "current-password";
+  clearMessage("authMessage");
+});
+
+$("authForm").addEventListener("submit", async e => {
+  e.preventDefault();
+  clearMessage("authMessage");
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  const name = $("signupName").value.trim();
+  const button = $("authSubmit");
+  button.disabled = true;
+  button.textContent = "Subiri...";
+  try {
+    if (signupMode) {
+      if (!name) throw new Error("Weka jina kamili.");
+      const result = await createUserWithEmailAndPassword(auth,email,password);
+      await updateProfile(result.user,{displayName:name});
+      await setDoc(doc(db,"users",result.user.uid),{
+        uid:result.user.uid,name,email,role:"user",createdAt:serverTimestamp()
       });
-
-      const tbody = $("transactionsBody");
-
-      tbody.replaceChildren();
-
-      $("emptyTransactions").classList.toggle(
-        "hidden",
-        filtered.length > 0
-      );
-
-      if (filtered.length === 0) {
-
-        $("emptyTransactions").textContent =
-          transactions.length === 0
-            ? t("empty")
-            : "Hakuna matokeo ya utafutaji.";
-
-        return;
-
-      }
-
-      for (const item of filtered) {
-
-        const row = document.createElement("tr");
-
-        function addCell(value) {
-
-          const cell = document.createElement("td");
-          cell.textContent = value ?? "";
-          row.appendChild(cell);
-
-          return cell;
-
-        }
-
-        addCell(item.date || "");
-
-        const typeCell = addCell("");
-
-        const badge = document.createElement("span");
-
-        badge.className = item.type === "income"
-          ? "badge badge-income"
-          : "badge badge-expense";
-
-        badge.textContent = item.type === "income"
-          ? t("incomeOption")
-          : t("expenseOption");
-
-        typeCell.appendChild(badge);
-
-        addCell(item.description || "");
-        addCell(item.person || "");
-        addCell(formatMoney(Number(item.amount || 0)));
-
-        const actionCell = addCell("");
-        actionCell.className = "delete-column no-print";
-
-        const deleteButton = document.createElement("button");
-
-        deleteButton.type = "button";
-        deleteButton.className = "small-button";
-        deleteButton.textContent = t("delete");
-
-        deleteButton.addEventListener("click", async () => {
-
-          if (!confirm(t("confirmDelete"))) return;
-
-          if (!currentUser) return;
-
-          try {
-
-            // Only attempt deletion of a transaction owned by this user.
-            // Firestore rules must enforce ownership as well.
-
-            const transactionRef = doc(
-              db,
-              "transactions",
-              item.id
-            );
-
-            const existing = await getDoc(transactionRef);
-
-            if (!existing.exists()) {
-              await loadTransactions();
-              return;
-            }
-
-            if (existing.data().uid !== currentUser.uid) {
-              alert(t("noPermission"));
-              return;
-            }
-
-            await deleteDoc(transactionRef);
-
-            await loadTransactions();
-
-            showMessage(
-              transactionMessage,
-              t("transactionDeleted"),
-              "success"
-            );
-
-          } catch (error) {
-
-            console.error("Delete transaction error:", error);
-
-            alert(readableFirebaseError(error));
-
-          }
-
-        });
-
-        actionCell.appendChild(deleteButton);
-
-        tbody.appendChild(row);
-
-      }
-
+    } else {
+      await signInWithEmailAndPassword(auth,email,password);
     }
+  } catch (e) {
+    message("authMessage",errText(e),"error");
+    console.error(e);
+  } finally {
+    button.disabled = false;
+    button.textContent = signupMode ? "Jisajili" : "Login";
+  }
+});
 
+$("resetPassword").addEventListener("click",async()=>{
+  const email=$("email").value.trim();
+  if(!email) return message("authMessage","Andika barua pepe kwanza.","error");
+  try {
+    await sendPasswordResetEmail(auth,email);
+    message("authMessage","Maelekezo yametumwa kwenye barua pepe yako.","success");
+  } catch(e) { message("authMessage",errText(e),"error"); }
+});
 
-    $("searchTransactions").addEventListener(
-      "input",
-      renderTransactions
-    );
+$("logout").addEventListener("click",()=>signOut(auth));
 
+onAuthStateChanged(auth,async current=>{
+  user=current;
+  $("authView").classList.toggle("hidden",!!user);
+  $("appView").classList.toggle("hidden",!user);
+  if(user) {
+    await loadProfile();
+    await loadTransactions();
+    await loadPhotos();
+  } else {
+    items=[];photos=[];
+  }
+});
 
-    // EXPORT CSV
+async function loadProfile() {
+  if(!user) return;
+  let name=user.displayName || user.email.split("@")[0];
+  try {
+    const snap=await getDoc(doc(db,"users",user.uid));
+    if(snap.exists()) name=snap.data().name || name;
+    $("avatar").src=snap.exists() && snap.data().photoURL
+      ? snap.data().photoURL
+      : "data:image/svg+xml,"+encodeURIComponent(
+          `<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100%" height="100%" fill="#dcfce7"/><text x="50%" y="55%" font-size="38" text-anchor="middle" fill="#166534">${(name[0]||"U").toUpperCase()}</text></svg>`
+        );
+  } catch(e) { console.error(e); }
+  $("topName").textContent=name;
+  $("topEmail").textContent=user.email || "";
+  $("profileName").value=name;
+  $("profileEmail").value=user.email || "";
+}
 
-    $("csvButton").addEventListener("click", () => {
+$("profileForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!user) return;
+  const name=$("profileName").value.trim();
+  if(!name) return message("profileMessage","Weka jina lako.","error");
+  try {
+    await updateProfile(user,{displayName:name});
+    await setDoc(doc(db,"users",user.uid),{uid:user.uid,name,email:user.email},{merge:true});
+    await loadProfile();
+    message("profileMessage","Taarifa za akaunti zimehifadhiwa.","success");
+  } catch(e) { message("profileMessage",errText(e),"error"); }
+});
 
-      if (transactions.length === 0) {
-        alert(t("csvEmpty"));
-        return;
-      }
+$("accountPasswordReset").addEventListener("click",async()=>{
+  if(!user?.email) return;
+  try {
+    await sendPasswordResetEmail(auth,user.email);
+    message("profileMessage","Maelekezo yametumwa kwenye barua pepe yako.","success");
+  } catch(e) { message("profileMessage",errText(e),"error"); }
+});
 
-      const headers = [
-        "Date",
-        "Type",
-        "Description",
-        "Person",
-        "Amount_TZS"
-      ];
+async function loadTransactions() {
+  if(!user) return;
+  try {
+    const snap=await getDocs(query(collection(db,"transactions"),where("uid","==",user.uid)));
+    items=snap.docs.map(d=>({id:d.id,...d.data()}));
+    items.sort((a,b)=>String(b.date||"").localeCompare(String(a.date||"")));
+    renderTransactions();
+  } catch(e) {
+    console.error(e);
+    message("transactionMessage",errText(e),"error");
+  }
+}
 
-      const rows = transactions.map(item => [
-        item.date || "",
-        item.type || "",
-        item.description || "",
-        item.person || "",
-        Number(item.amount || 0)
-      ]);
+function money(n) {
+  return new Intl.NumberFormat("sw-TZ",{style:"currency",currency:"TZS",maximumFractionDigits:0}).format(Number(n)||0);
+}
 
-      function escapeCSV(value) {
+function safeCell(value) {
+  const td=document.createElement("td");
+  td.textContent=value ?? "";
+  return td;
+}
 
-        let text = String(value ?? "");
+function renderTransactions() {
+  const income=items.filter(x=>x.type==="income").reduce((s,x)=>s+Number(x.amount||0),0);
+  const expense=items.filter(x=>x.type==="expense").reduce((s,x)=>s+Number(x.amount||0),0);
+  $("incomeTotal").textContent=money(income);
+  $("expenseTotal").textContent=money(expense);
+  $("balanceTotal").textContent=money(income-expense);
+  $("balanceTotal").className="value "+(income-expense<0?"red":"green");
+  $("countTotal").textContent=items.length;
 
-        // Prevent spreadsheet formula execution from user-entered text.
-        if (/^[=+\-@]/.test(text)) {
-          text = "'" + text;
-        }
+  const search=$("search").value.toLowerCase().trim();
+  const filtered=items.filter(x=>[x.date,x.type,x.description,x.person,x.amount].join(" ").toLowerCase().includes(search));
+  const tbody=$("transactionRows");
+  tbody.replaceChildren();
 
-        return '"' + text.replace(/"/g, '""') + '"';
+  for(const item of filtered) {
+    const tr=document.createElement("tr");
+    tr.appendChild(safeCell(item.date));
+    const type=safeCell("");
+    const badge=document.createElement("span");
+    badge.className="badge "+(item.type==="income"?"income":"expense");
+    badge.textContent=item.type==="income"?"Mapato":"Matumizi";
+    type.appendChild(badge);
+    tr.appendChild(type);
+    tr.appendChild(safeCell(item.description));
+    tr.appendChild(safeCell(item.person));
+    tr.appendChild(safeCell(money(item.amount)));
 
-      }
+    const action=safeCell("");
+    action.className="no-print";
+    const edit=document.createElement("button");
+    edit.className="smallbtn";
+    edit.textContent="Edit";
+    edit.onclick=()=>editTransaction(item);
+    action.appendChild(edit);
+    const del=document.createElement("button");
+    del.className="smallbtn del";
+    del.textContent="Futa";
+    del.onclick=()=>deleteTransaction(item);
+    action.appendChild(del);
+    tr.appendChild(action);
+    tbody.appendChild(tr);
+  }
 
-      const csv = [
-        headers.map(escapeCSV).join(","),
-        ...rows.map(row => row.map(escapeCSV).join(","))
-      ].join("\r\n");
-
-      const blob = new Blob(
-        ["\uFEFF" + csv],
-        { type: "text/csv;charset=utf-8;" }
-      );
-
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-
-      link.href = url;
-      link.download = "ShambaSmart-Transactions.csv";
-
-      document.body.appendChild(link);
-
-      link.click();
-      link.remove();
-
-      URL.revokeObjectURL(url);
-
-      showMessage(
-        transactionMessage,
-        t("csvSuccess"),
-        "success"
-      );
-
-    });
-
-
-    // PRINT OR SAVE AS PDF
-
-    $("printButton").addEventListener("click", () => {
-      window.print();
-    });
-
-
-    // LANGUAGE SWITCH
-
-    $("languageButton").addEventListener("click", () => {
-
-      language = language === "sw" ? "en" : "sw";
-
-      applyLanguage();
-
-    });
-
-
-    function applyLanguage() {
-
-      const keys = {
-
-        authTitle: "authTitle",
-        authSubtitle: "authSubtitle",
-        welcomeSubtitle: "welcomeSubtitle",
-        incomeLabel: "income",
-        expenseLabel: "expenses",
-        balanceLabel: "balance",
-        countLabel: "count",
-        formTitle: "formTitle",
-        formDescription: "formDescription",
-        typeLabel: "type",
-        dateLabel: "date",
-        descriptionLabel: "description",
-        personLabel: "person",
-        amountLabel: "amount",
-        saveTransactionButton: "save",
-        clearFormButton: "clear",
-        historyTitle: "history",
-        historyDescription: "historyDescription",
-        csvButton: "csv",
-        printButton: "print",
-        thDate: "thDate",
-        thType: "thType",
-        thDescription: "thDescription",
-        thPerson: "thPerson",
-        thAmount: "thAmount",
-        thAction: "thAction",
-        logoutButton: "logout",
-        forgotPasswordButton: "forgot"
-
-      };
-
-      for (const [elementId, key] of Object.entries(keys)) {
-
-        const element = $(elementId);
-
-        if (element) {
-          element.textContent = t(key);
-        }
-
-      }
-
-      $("languageButton").textContent =
-        language === "sw" ? "English" : "Kiswahili";
-
-      $("searchTransactions").placeholder = t("search");
-
-      $("transactionType").options[0].textContent = t("incomeOption");
-      $("transactionType").options[1].textContent = t("expenseOption");
-
-      $("toggleAuthButton").textContent = isSignup
-        ? "Tayari una akaunti? Login"
-        : t("signup");
-
-      loginButton.textContent = isSignup
-        ? t("createAccount")
-        : t("login");
-
-      renderTransactions();
-
-      if (currentUser) {
-        showCurrentUser();
-      }
-
+  $("noTransactions").classList.toggle("hidden",filtered.length>0);
+  $("recentTransactions").replaceChildren();
+  if(items.length===0) {
+    $("recentTransactions").textContent="Hakuna miamala bado.";
+  } else {
+    for(const item of items.slice(0,5)) {
+      const p=document.createElement("p");
+      p.textContent=`${item.date||""} · ${item.description||""} · ${money(item.amount)}`;
+      $("recentTransactions").appendChild(p);
     }
+  }
+}
 
+$("search").addEventListener("input",renderTransactions);
 
-    // LOG INITIALIZATION ERRORS
+$("transactionForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(!user) return;
+  const id=$("editId").value;
+  const record={
+    uid:user.uid,
+    type:$("type").value,
+    date:$("date").value,
+    description:$("description").value.trim(),
+    person:$("person").value.trim(),
+    amount:Number($("amount").value)
+  };
+  if(!record.description || !record.date || record.amount<=0) {
+    return message("transactionMessage","Weka maelezo, tarehe na kiasi sahihi.","error");
+  }
+  const btn=$("saveTransaction");
+  btn.disabled=true;
+  try {
+    if(id) {
+      const old=items.find(x=>x.id===id);
+      if(!old || old.uid!==user.uid) throw new Error("Huna ruhusa ya kuhariri muamala huu.");
+      await updateDoc(doc(db,"transactions",id),record);
+    } else {
+      await addDoc(collection(db,"transactions"),{...record,createdAt:serverTimestamp()});
+    }
+    resetTransactionForm();
+    await loadTransactions();
+    message("transactionMessage",id?"Miamala imehaririwa.":"Muamala umehifadhiwa.","success");
+  } catch(e) {
+    message("transactionMessage",errText(e),"error");
+    console.error(e);
+  } finally { btn.disabled=false; }
+});
 
-    window.addEventListener("error", (event) => {
+function editTransaction(x) {
+  $("editId").value=x.id;
+  $("type").value=x.type;
+  $("date").value=x.date;
+  $("description").value=x.description;
+  $("person").value=x.person||"";
+  $("amount").value=x.amount;
+  $("transactionFormTitle").textContent="Hariri muamala";
+  document.querySelector('[data-page="transactions"]').click();
+}
 
-      console.error(
-        "Application error:",
-        event.message,
-        event.filename,
-        event.lineno
-      );
+function resetTransactionForm() {
+  $("transactionForm").reset();
+  $("editId").value="";
+  $("date").value=new Date().toISOString().slice(0,10);
+  $("transactionFormTitle").textContent="Ongeza muamala";
+}
+$("cancelEdit").addEventListener("click",resetTransactionForm);
 
+async function deleteTransaction(x) {
+  if(!user || x.uid!==user.uid) return alert("Huna ruhusa.");
+  if(!confirm("Una uhakika unataka kufuta muamala huu?")) return;
+  try {
+    await deleteDoc(doc(db,"transactions",x.id));
+    await loadTransactions();
+  } catch(e) { alert(errText(e)); }
+}
+
+function exportCSV() {
+  if(!items.length) return alert("Hakuna miamala ya kupakua.");
+  const headers=["Date","Type","Description","Person","Amount_TZS"];
+  const quote=v=>'"'+String(v??"").replace(/"/g,'""')+'"';
+  const rows=items.map(x=>[x.date,x.type,x.description,x.person,x.amount]);
+  const csv=[headers,...rows].map(r=>r.map(quote).join(",")).join("\r\n");
+  const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download="ShambaSmart-Report.csv";a.click();
+  URL.revokeObjectURL(url);
+}
+$("exportCsv").addEventListener("click",exportCSV);
+$("reportCsv").addEventListener("click",exportCSV);
+$("reportPdf").addEventListener("click",()=>window.print());
+
+/* Firebase Storage photo upload */
+async function uploadImage(file,path) {
+  if(!file) throw new Error("Chagua picha kwanza.");
+  if(!file.type.startsWith("image/")) throw new Error("Faili lazima liwe picha.");
+  if(file.size>5*1024*1024) throw new Error("Picha isiwe kubwa kuliko 5 MB.");
+  const imageRef=ref(storage,path);
+  await uploadBytes(imageRef,file,{contentType:file.type});
+  return getDownloadURL(imageRef);
+}
+
+$("uploadAvatar").addEventListener("click",async()=>{
+  const file=$("avatarInput").files[0];
+  if(!user) return;
+  try {
+    const url=await uploadImage(file,`users/${user.uid}/profile-${Date.now()}`);
+    await updateProfile(user,{photoURL:url});
+    await setDoc(doc(db,"users",user.uid),{uid:user.uid,photoURL:url},{merge:true});
+    await loadProfile();
+    message("profileMessage","Picha ya profaili imebadilishwa.","success");
+  } catch(e) { message("profileMessage",errText(e),"error"); }
+});
+
+async function loadPhotos() {
+  if(!user) return;
+  try {
+    const snap=await getDocs(query(collection(db,"photos"),where("uid","==",user.uid)));
+    photos=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderPhotos();
+  } catch(e) {
+    console.error("Photos loading error:",e);
+    message("photoMessage",errText(e),"error");
+  }
+}
+
+$("uploadPhoto").addEventListener("click",async()=>{
+  if(!user) return;
+  const file=$("photoInput").files[0];
+  const button=$("uploadPhoto");
+  button.disabled=true;
+  try {
+    const path=`users/${user.uid}/photos/${Date.now()}-${file?.name||"photo"}`;
+    const url=await uploadImage(file,path);
+    await addDoc(collection(db,"photos"),{
+      uid:user.uid,url,path,name:file.name,createdAt:serverTimestamp()
     });
+    $("photoInput").value="";
+    await loadPhotos();
+    message("photoMessage","Picha imepakiwa.","success");
+  } catch(e) {
+    message("photoMessage",errText(e),"error");
+  } finally { button.disabled=false; }
+});
 
+function renderPhotos() {
+  const grid=$("photoGrid");
+  grid.replaceChildren();
+  $("noPhotos").classList.toggle("hidden",photos.length>0);
+  for(const photo of photos) {
+    const card=document.createElement("div");
+    card.className="photo-card";
+    const img=document.createElement("img");
+    img.src=photo.url;img.alt=photo.name||"Picha ya shamba";
+    const name=document.createElement("p");
+    name.textContent=photo.name||"Picha";
+    const del=document.createElement("button");
+    del.className="btn danger";
+    del.textContent="Futa picha";
+    del.onclick=()=>deletePhoto(photo);
+    card.append(img,name,del);
+    grid.appendChild(card);
+  }
+}
 
-    console.log("ShambaSmart initialized.");
+async function deletePhoto(photo) {
+  if(!user || photo.uid!==user.uid) return alert("Huna ruhusa.");
+  if(!confirm("Futa picha hii?")) return;
+  try {
+    await deleteDoc(doc(db,"photos",photo.id));
+    try { await deleteObject(ref(storage,photo.path)); }
+    catch(storageError) { console.warn(storageError); }
+    await loadPhotos();
+  } catch(e) { alert(errText(e)); }
+}
 
-  </script>
+/* Navigation */
+document.querySelectorAll("[data-page]").forEach(button=>{
+  button.addEventListener("click",()=>{
+    document.querySelectorAll("[data-page]").forEach(b=>b.classList.remove("active"));
+    button.classList.add("active");
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    $("page-"+button.dataset.page).classList.add("active");
+  });
+});
 
+/* Kiswahili / English */
+function applyLanguage() {
+  document.documentElement.lang=lang;
+  document.querySelectorAll("[data-sw][data-en]").forEach(el=>{
+    el.textContent=el.dataset[lang];
+  });
+  $("languageSelect").value=lang;
+  $("langToggle").textContent=lang==="sw"?"English":"Kiswahili";
+  localStorage.setItem("shambasmart-language",lang);
+}
+$("langToggle").addEventListener("click",()=>{
+  lang=lang==="sw"?"en":"sw";
+  applyLanguage();
+});
+$("languageSelect").addEventListener("change",()=>{
+  lang=$("languageSelect").value;
+  applyLanguage();
+});
+applyLanguage();
+
+console.log("I & E ShambaSmart initialized");
+</script>
 </body>
 </html>
