@@ -1,0 +1,95 @@
+<!DOCTYPE html><html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I & E ShambaSmart</title>
+<style>
+body{font-family:Arial,sans-serif;margin:0;background:#f0f5ef;color:#183b24}
+header{background:#176b38;color:white;padding:22px 15px;text-align:center}
+main{padding:15px;max-width:650px;margin:auto}
+.card{background:white;padding:16px;margin:12px 0;border-radius:12px;box-shadow:0 2px 7px #0001}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{background:#19763e;color:white;border:0;padding:12px;border-radius:8px;font-size:15px;width:100%;cursor:pointer}
+input,select{width:100%;box-sizing:border-box;padding:11px;margin:7px 0;border:1px solid #bbb;border-radius:7px}
+h2{font-size:18px}
+.amount{font-size:22px;font-weight:bold}
+small{color:#536658}
+</style>
+</head>
+<body>
+<header>
+<h1>🌱 I & E ShambaSmart</h1>
+<p>Mfumo wa Kusimamia Shamba</p>
+</header>
+<main>
+<div class="card">
+<h2>📊 Muhtasari wa Fedha</h2>
+<p>Jumla ya Mapato</p><div class="amount" id="income">TZS 0</div>
+<p>Jumla ya Matumizi</p><div class="amount" id="expenses">TZS 0</div>
+<p>Salio</p><div class="amount" id="balance">TZS 0</div>
+</div><div class="card">
+<h2>➕ Rekodi ya Fedha</h2>
+<select id="type">
+<option value="income">Mapato</option>
+<option value="expense">Matumizi</option>
+</select>
+<input id="description" placeholder="Maelezo, mfano kuuza mahindi">
+<input id="amount" type="number" min="1" placeholder="Kiasi cha fedha (TZS)">
+<button onclick="addRecord()">Hifadhi Rekodi</button>
+</div><div class="grid">
+<div class="card"><h2>🌾 Kilimo</h2><p>Rekodi shughuli za shamba.</p><button onclick="activity('Kilimo')">Ongeza Shughuli</button></div>
+<div class="card"><h2>🐄 Ufugaji</h2><p>Rekodi shughuli za mifugo.</p><button onclick="activity('Ufugaji')">Ongeza Shughuli</button></div>
+<div class="card"><h2>📦 Stoo</h2><p>Fuatilia mazao na vifaa.</p><button onclick="activity('Stoo')">Ongeza Rekodi</button></div>
+<div class="card"><h2>🧾 Madeni</h2><p>Rekodi madeni ya mradi.</p><button onclick="activity('Madeni')">Ongeza Deni</button></div>
+</div><div class="card">
+<h2>📋 Rekodi Zilizohifadhiwa</h2>
+<div id="records">Bado hakuna rekodi.</div>
+<button onclick="exportCSV()">Pakua Ripoti (CSV)</button>
+</div>
+<p><small>Data huhifadhiwa kwenye kifaa hiki. Hifadhi nakala za ripoti zako mara kwa mara.</small></p>
+</main><script>
+let records=[];
+try{records=JSON.parse(localStorage.getItem('ie_records')||'[]')}catch(e){records=[]}
+function money(n){return 'TZS '+Number(n).toLocaleString('en-US')}
+function save(){localStorage.setItem('ie_records',JSON.stringify(records));render()}
+function addRecord(){
+ const type=document.getElementById('type').value;
+ const description=document.getElementById('description').value.trim();
+ const amount=Number(document.getElementById('amount').value);
+ if(!description||!Number.isFinite(amount)||amount<=0){alert('Weka maelezo na kiasi sahihi.');return}
+ records.push({type,description,amount,date:new Date().toLocaleDateString('sw-TZ')});
+ save();document.getElementById('description').value='';document.getElementById('amount').value='';
+ alert('Rekodi imehifadhiwa!');
+}
+function activity(name){
+ const description=prompt('Andika maelezo ya '+name+':');
+ if(!description||!description.trim())return;
+ records.push({type:'activity',description:name+': '+description.trim(),amount:0,date:new Date().toLocaleDateString('sw-TZ')});
+ save();alert('Rekodi imehifadhiwa!');
+}
+function render(){
+ const inc=records.filter(r=>r.type==='income').reduce((s,r)=>s+r.amount,0);
+ const exp=records.filter(r=>r.type==='expense').reduce((s,r)=>s+r.amount,0);
+ document.getElementById('income').textContent=money(inc);
+ document.getElementById('expenses').textContent=money(exp);
+ document.getElementById('balance').textContent=money(inc-exp);
+ const box=document.getElementById('records');
+ box.replaceChildren();
+ if(!records.length){box.textContent='Bado hakuna rekodi.';return}
+ records.slice().reverse().forEach(r=>{
+  const p=document.createElement('p');
+  p.textContent=r.date+' — '+r.description+(r.amount?(' — '+money(r.amount)):'');
+  box.appendChild(p);
+ });
+}
+function exportCSV(){
+ if(!records.length){alert('Hakuna rekodi za kupakua.');return}
+ const rows=[['Tarehe','Aina','Maelezo','Kiasi'],...records.map(r=>[r.date,r.type,r.description,r.amount])];
+ const csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+ const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+ const url=URL.createObjectURL(blob);const a=document.createElement('a');
+ a.href=url;a.download='Ripoti-ShambaSmart.csv';a.click();URL.revokeObjectURL(url);
+}
+render();
+</script></body>
+</html>
