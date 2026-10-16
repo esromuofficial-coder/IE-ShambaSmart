@@ -1,5 +1,8 @@
 {
-"appId": "com.ie.shambasmart",
-"appName": "I & E ShambaSmart",
-"webDir": "www"
+  "appId": "tz.co.ieshambasmart.app",
+  "appName": "I & E ShambaSmart",
+  "webDir": "www",
+  "server": {
+    "androidScheme": "https"
+  }
 }
