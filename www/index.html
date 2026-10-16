@@ -1,15 +1,277 @@
-<!DOCTYPE html><html lang="sw">
+<!DOCTYPE html>
+<html lang="sw">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="refresh" content="0; url=www/index.html">
-  <title>I & E ShambaSmart</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#166534">
+<title>I & E ShambaSmart</title>
+
+<style>
+:root{
+  --green:#166534;
+  --green2:#15803d;
+  --light:#f0fdf4;
+  --bg:#f5f7f5;
+  --white:#fff;
+  --text:#17251b;
+  --muted:#647067;
+  --red:#dc2626;
+  --border:#e1e8e2;
+  --shadow:0 5px 20px rgba(0,0,0,.06);
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.container{max-width:1200px;margin:auto;padding:20px}
+.card{
+  background:var(--white);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:20px;
+  box-shadow:var(--shadow);
+}
+h1,h2,h3{margin-top:0}
+button,.btn{
+  background:var(--green);
+  color:white;
+  border:0;
+  border-radius:9px;
+  padding:11px 15px;
+  font-weight:600;
+}
+button:hover,.btn:hover{background:var(--green2)}
+button.secondary{background:#e8f5eb;color:var(--green)}
+button.danger{background:var(--red)}
+input,select,textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid #d5ded6;
+  border-radius:9px;
+  margin:6px 0 14px;
+  background:white;
+  color:var(--text);
+}
+label{font-size:14px;font-weight:600}
+.auth-wrap{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:linear-gradient(140deg,#14532d,#22c55e);
+}
+.auth-card{
+  width:100%;
+  max-width:430px;
+  background:white;
+  padding:28px;
+  border-radius:20px;
+  box-shadow:0 15px 45px #0002;
+}
+.logo{
+  width:60px;height:60px;
+  border-radius:16px;
+  display:grid;place-items:center;
+  background:var(--light);
+  font-size:30px;
+  margin-bottom:15px;
+}
+.auth-card h1{color:var(--green);font-size:25px}
+.auth-card button{width:100%;margin:4px 0 12px}
+.link-button{
+  background:transparent;color:var(--green);
+  padding:8px 0;
+}
+.link-button:hover{background:transparent;text-decoration:underline}
+.topbar{
+  background:white;
+  border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:5;
+}
+.topbar-inner{
+  max-width:1200px;margin:auto;padding:12px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;
+}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-icon{
+  background:var(--green);color:white;border-radius:10px;
+  padding:10px;font-size:21px;
+}
+.brand strong{color:var(--green)}
+.header-actions{display:flex;align-items:center;gap:8px}
+.header-actions select{width:auto;margin:0;padding:9px}
+.nav{
+  display:flex;gap:8px;overflow-x:auto;
+  padding:12px 20px;max-width:1200px;margin:auto;
+}
+.nav button{white-space:nowrap;background:#e8f5eb;color:var(--green)}
+.nav button.active{background:var(--green);color:white}
+.page{display:none}
+.page.active{display:block}
+.grid{
+  display:grid;gap:16px;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+.stat{padding:20px}
+.stat-label{color:var(--muted);font-size:14px}
+.stat-value{font-size:clamp(20px,3vw,28px);font-weight:800;margin-top:10px}
+.stat-icon{font-size:25px}
+.two-col{
+  display:grid;grid-template-columns:1fr 1fr;gap:18px;
+}
+.form-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:0 15px;
+}
+.full{grid-column:1/-1}
+.section-title{
+  display:flex;justify-content:space-between;
+  align-items:center;gap:10px;flex-wrap:wrap;
+  margin:25px 0 15px;
+}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:600px}
+th,td{
+  text-align:left;padding:12px;
+  border-bottom:1px solid var(--border);font-size:14px;
+}
+th{background:#f6faf6}
+.badge{
+  display:inline-block;padding:5px 9px;border-radius:20px;
+  font-size:12px;font-weight:bold;
+}
+.income{background:#dcfce7;color:#166534}
+.expense{background:#fee2e2;color:#991b1b}
+.notice{
+  padding:12px;border-radius:9px;
+  background:#eff6ff;color:#1d4ed8;margin:10px 0;
+}
+.status{margin:10px 0;font-size:14px}
+.gallery{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:15px;
+}
+.photo-card{overflow:hidden;padding:0}
+.photo-card img{width:100%;height:190px;object-fit:cover;display:block}
+.photo-info{padding:12px}
+.photo-info p{overflow-wrap:anywhere}
+.footer{
+  text-align:center;padding:25px;color:var(--muted);font-size:13px;
+}
+hr{border:0;border-top:1px solid var(--border);margin:20px 0}
+@media(max-width:850px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .two-col{grid-template-columns:1fr}
+}
+@media(max-width:520px){
+  .container{padding:13px}
+  .topbar-inner{padding:10px}
+  .brand strong{font-size:14px}
+  .brand small{font-size:11px}
+  .header-actions select{max-width:105px}
+  .header-actions button{padding:9px;font-size:12px}
+  .nav{padding:10px}
+  .card{padding:15px}
+  .gallery{grid-template-columns:1fr}
+  .photo-card img{height:220px}
+  .form-grid{grid-template-columns:1fr}
+  .full{grid-column:auto}
+}
+</style>
 </head>
+
 <body>
-  <p>Unaelekezwa kwenye ShambaSmart...</p>
-  <p><a href="www/index.html">Bonyeza hapa kufungua ShambaSmart</a></p>
-  <script>
-    window.location.replace("www/index.html");
-  </script>
-</body>
-</html>
+
+<!-- LOGIN / REGISTRATION -->
+<section id="authScreen" class="auth-wrap">
+  <div class="auth-card">
+    <div class="logo">🌱</div>
+    <h1>I & E ShambaSmart</h1>
+    <p class="muted">Usimamizi wa mapato, matumizi na shughuli za shamba.</p>
+
+    <div id="loginForm">
+      <h2>Ingia kwenye akaunti</h2>
+      <label>Barua pepe</label>
+      <input id="loginEmail" type="email" autocomplete="email"
+        placeholder="Barua pepe yako" required>
+
+      <label>Nenosiri</label>
+      <input id="loginPassword" type="password"
+        autocomplete="current-password" placeholder="Nenosiri" required>
+
+      <button id="loginBtn">Ingia</button>
+      <button class="link-button" id="showRegister">Fungua akaunti mpya</button>
+      <button class="link-button" id="forgotBtn">Umesahau nenosiri?</button>
+    </div>
+
+    <div id="registerForm" class="hidden">
+      <h2>Fungua akaunti</h2>
+      <label>Jina lako kamili</label>
+      <input id="registerName" placeholder="Jina kamili" required>
+
+      <label>Barua pepe</label>
+      <input id="registerEmail" type="email" placeholder="Barua pepe" required>
+
+      <label>Nenosiri (angalau herufi 6)</label>
+      <input id="registerPassword" type="password"
+        autocomplete="new-password" minlength="6" placeholder="Nenosiri" required>
+
+      <button id="registerBtn">Jisajili</button>
+      <button class="link-button" id="showLogin">Nina akaunti tayari</button>
+    </div>
+
+    <div id="authMessage" class="status" role="status"></div>
+  </div>
+</section>
+
+<!-- APPLICATION -->
+<div id="appScreen" class="hidden">
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="brand-icon">🌿</div>
+      <div>
+        <strong>I & E ShambaSmart</strong><br>
+        <small id="welcomeName">Karibu</small>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <select id="languageSelect" aria-label="Chagua lugha">
+        <option value="sw">Kiswahili</option>
+        <option value="en">English</option>
+      </select>
+      <button id="logoutBtn" data-i18n="logout">Toka</button>
+    </div>
+  </div>
+
+  <nav class="nav" id="mainNav">
+    <button class="active" data-page="home" data-i18n="dashboard">Dashboard</button>
+    <button data-page="add" data-i18n="addTransaction">Ongeza muamala</button>
+    <button data-page="transactions" data-i18n="transactions">Miamala</button>
+    <button data-page="reports" data-i18n="reports">Ripoti</button>
+    <button data-page="gallery" data-i18n="gallery">Picha</button>
+    <button data-page="account" data-i18n="account">Akaunti</button>
+    <button data-page="admin" id="adminNav" class="hidden" data-i18n="admin">Admin</button>
+  </nav>
+</header>
+
+<main class="container">
+
+<!-- DASHBOARD -->
+<section id="page-home" class="page active">
+  <div class="section-title">
+    <div>
+      <h1 data-i18n="dashboard">Dashboard</h1>
+      <p
