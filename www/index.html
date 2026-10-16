@@ -2,841 +2,688 @@
 <html lang="sw">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>I&E ShambaSmart</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#166534">
+<title>I & E ShambaSmart</title>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
 <style>
-:root {
-  --green:#176b3a;
-  --green2:#218c50;
-  --light:#f2f8f3;
-  --white:#fff;
-  --text:#24352a;
-  --red:#c62828;
-}
+:root{--g:#166534;--bg:#f3f7f3;--border:#dce5dd;--muted:#647067}
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:var(--light);color:var(--text)}
-header{background:var(--green);color:white;padding:17px 20px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-header h1{font-size:22px;margin:0}
-header p{margin:5px 0 0;font-size:13px}
-button,input,select{font:inherit}
-button{border:0;border-radius:8px;padding:11px 14px;cursor:pointer;font-weight:bold}
-.primary{background:var(--green);color:white}
-.secondary{background:#e4f2e7;color:var(--green)}
-.danger{background:var(--red);color:white}
-.lang-btn{background:white;color:var(--green);padding:8px 11px}
-main{max-width:1100px;margin:auto;padding:18px}
-.card{background:white;padding:20px;border-radius:14px;margin-bottom:18px;box-shadow:0 3px 12px #0000000d}
-h2,h3{margin-top:0}
-input,select{width:100%;padding:12px;border:1px solid #ccd8ce;border-radius:8px;background:white;margin:6px 0 12px}
-label{font-size:14px;font-weight:bold}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}
-.stat{background:#e8f5eb;border-radius:12px;padding:16px}
-.stat strong{display:block;font-size:23px;margin-top:8px;overflow-wrap:anywhere}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.row>*{flex:1}
+body{margin:0;font:16px Arial,sans-serif;background:var(--bg);color:#17251a}
+header{background:var(--g);color:white;padding:16px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+header h1{font-size:19px;margin:0 0 5px}
+main{max-width:850px;margin:auto;padding:14px 14px 90px}
+.card{background:white;border:1px solid var(--border);border-radius:13px;padding:16px;margin-bottom:14px;overflow-wrap:anywhere}
+h2{font-size:20px;margin-top:0}
+.muted{font-size:14px;color:var(--muted)}
+.field{margin-bottom:14px}
+label{display:block;font-size:14px;font-weight:bold;margin-bottom:6px}
+input,select,button{font:inherit}
+input,select{width:100%;padding:12px;border:1px solid #cbd5cc;border-radius:9px;background:white}
+button{cursor:pointer}
+.btn{padding:12px 15px;border:0;border-radius:9px;background:var(--g);color:white;font-weight:bold}
+.full{width:100%}
+.secondary{background:#e5eee6;color:#164b28}
 .hidden{display:none!important}
-.center{text-align:center}
-.brand-icon{font-size:42px}
-.small{font-size:13px;color:#607366;line-height:1.6}
-.notice{padding:12px;border-radius:8px;margin:10px 0;background:#fff4d6;color:#674d00}
-.success{background:#e2f5e6;color:#155724}
-.error{background:#ffebee;color:#a00000}
-table{border-collapse:collapse;width:100%;min-width:650px}
-th,td{padding:11px;border-bottom:1px solid #e1e8e2;text-align:left;font-size:14px}
-th{background:#e8f5eb}
+.auth{max-width:450px;margin:25px auto;padding:14px}
+.notice{padding:12px;border-radius:8px;margin:10px 0;font-size:14px;overflow-wrap:anywhere}
+.error{background:#fee2e2;color:#991b1b}
+.success{background:#dcfce7;color:#166534}
+.info{background:#dbeafe;color:#1e40af}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{font-size:20px;font-weight:bold;margin-top:8px;overflow-wrap:anywhere}
+.green{color:#15803d}.red{color:#b91c1c}
+.tabs{position:fixed;bottom:0;left:0;right:0;display:flex;background:white;border-top:1px solid var(--border);padding:6px 2px;z-index:5}
+.tabs button{flex:1;background:transparent;border:0;padding:9px 1px;font-size:12px;color:#475569}
+.tabs button.active{color:var(--g);font-weight:bold}
 .table-wrap{overflow-x:auto}
-footer{text-align:center;padding:22px;color:#627467;font-size:13px}
-.nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
-.nav button{background:#e2eee4;color:var(--green)}
-.nav button.active{background:var(--green);color:white}
-hr{border:0;border-top:1px solid #e2e9e3;margin:20px 0}
-@media(max-width:600px){
- header h1{font-size:19px}
- main{padding:10px}
- .card{padding:15px}
- .row>*{min-width:100%}
-}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:9px 6px;border-bottom:1px solid var(--border);text-align:left}
+.empty{text-align:center;padding:18px;color:var(--muted)}
+.link{border:0;background:transparent;color:var(--g);padding:12px 0}
+.langbar{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.langbar button{padding:8px 11px}
+@media(min-width:650px){.grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
 </style>
 </head>
 
 <body>
-<header>
+<section id="loadingScreen" class="auth">
+ <div class="card">
+  <h2>I & E ShambaSmart 🌱</h2>
+  <p id="loadingText">Inafungua programu...</p>
+  <div id="loadingError" class="notice error hidden"></div>
+  <button id="reloadButton" class="btn secondary hidden" onclick="location.reload()">Pakia upya</button>
+ </div>
+</section>
+
+<!-- LOGIN: muonekano wa awali umehifadhiwa -->
+<section id="authScreen" class="auth hidden">
+ <div class="card">
+  <h1>I & E ShambaSmart 🌱</h1>
+  <p class="muted">Simamia mapato na matumizi ya shamba lako.</p>
+
+  <div id="loginPanel">
+   <h2>Ingia kwenye akaunti</h2>
+   <form id="loginForm">
+    <div class="field">
+     <label for="loginEmail">Barua pepe</label>
+     <input id="loginEmail" type="email" autocomplete="email" required>
+    </div>
+    <div class="field">
+     <label for="loginPassword">Nenosiri</label>
+     <input id="loginPassword" type="password" autocomplete="current-password" required>
+    </div>
+    <button class="btn full" type="submit">Ingia</button>
+   </form>
+   <button id="forgotPassword" class="link" type="button">Umesahau nenosiri?</button><br>
+   <button id="showRegister" class="link" type="button">Huna akaunti? Jisajili</button>
+  </div>
+
+  <div id="registerPanel" class="hidden">
+   <h2>Fungua akaunti</h2>
+   <form id="registerForm">
+    <div class="field">
+     <label for="registerName">Jina kamili</label>
+     <input id="registerName" maxlength="100" required>
+    </div>
+    <div class="field">
+     <label for="registerEmail">Barua pepe</label>
+     <input id="registerEmail" type="email" autocomplete="email" required>
+    </div>
+    <div class="field">
+     <label for="registerPassword">Nenosiri (angalau herufi 6)</label>
+     <input id="registerPassword" type="password" minlength="6" autocomplete="new-password" required>
+    </div>
+    <button class="btn full" type="submit">Jisajili</button>
+   </form>
+   <button id="showLogin" class="link" type="button">Tayari una akaunti? Ingia</button>
+  </div>
+  <div id="authMessage" aria-live="polite"></div>
+ </div>
+</section>
+
+<section id="appScreen" class="hidden">
+ <header>
   <div>
-    <h1>🌱 I&E ShambaSmart</h1>
-    <p id="headerSubtitle">Mfumo wa usimamizi wa shamba</p>
+   <h1>I & E ShambaSmart 🌱</h1>
+   <small id="welcomeText">Karibu</small>
   </div>
-  <div class="row" style="flex:0 0 auto">
-    <button class="lang-btn" onclick="setLang('sw')">Kiswahili</button>
-    <button class="lang-btn" onclick="setLang('en')">English</button>
-    <button id="logoutBtn" class="danger hidden" onclick="logout()">Toka</button>
+  <div>
+   <div class="langbar">
+    <button id="langSw" class="btn secondary" type="button">Kiswahili</button>
+    <button id="langEn" class="btn secondary" type="button">English</button>
+    <button id="logoutButton" class="btn secondary" type="button">Toka</button>
+   </div>
   </div>
-</header>
+ </header>
 
-<main>
-  <div id="message" class="hidden notice"></div>
+ <main>
+  <div id="appMessage" aria-live="polite"></div>
 
-  <!-- LOGIN PAGE -->
-  <section id="authPage">
-    <div class="card center">
-      <div class="brand-icon">🌾</div>
-      <h2 data-i18n="welcome">Karibu I&E ShambaSmart</h2>
-      <p data-i18n="welcomeText">Simamia shughuli za shamba lako sehemu moja.</p>
-    </div>
-
-    <div class="grid">
-      <div class="card">
-        <h2 data-i18n="login">Ingia kwenye akaunti</h2>
-        <form id="loginForm">
-          <label data-i18n="email">Barua pepe</label>
-          <input id="loginEmail" type="email" required autocomplete="email">
-
-          <label data-i18n="password">Nenosiri</label>
-          <input id="loginPassword" type="password" required autocomplete="current-password">
-
-          <button class="primary" type="submit" style="width:100%" data-i18n="loginBtn">Ingia</button>
-        </form>
-        <p><button class="secondary" onclick="resetPassword()" data-i18n="forgot">Umesahau nenosiri?</button></p>
-      </div>
-
-      <div class="card">
-        <h2 data-i18n="register">Fungua akaunti mpya</h2>
-        <form id="registerForm">
-          <label data-i18n="fullName">Jina kamili</label>
-          <input id="registerName" required maxlength="80" autocomplete="name">
-
-          <label data-i18n="email">Barua pepe</label>
-          <input id="registerEmail" type="email" required autocomplete="email">
-
-          <label data-i18n="password">Nenosiri</label>
-          <input id="registerPassword" type="password" required minlength="6" autocomplete="new-password">
-
-          <label data-i18n="confirmPassword">Thibitisha nenosiri</label>
-          <input id="registerConfirm" type="password" required minlength="6" autocomplete="new-password">
-
-          <button class="primary" type="submit" style="width:100%" data-i18n="registerBtn">Jisajili</button>
-        </form>
-      </div>
-    </div>
-
-    <!-- OWNER AND SUPERVISOR ALWAYS VISIBLE -->
-    <div class="card">
-      <h2 data-i18n="about">Kuhusu Mradi</h2>
-      <div class="grid">
-        <div class="stat">
-          <span data-i18n="projectName">Jina la mradi</span>
-          <strong>I&E ShambaSmart</strong>
-        </div>
-        <div class="stat">
-          <span data-i18n="projectOwner">Mmiliki wa Mradi</span>
-          <strong>Ibrahim</strong>
-        </div>
-        <div class="stat">
-          <span data-i18n="projectSupervisor">Msimamizi wa Mradi</span>
-          <strong>Esromu</strong>
-        </div>
-        <div class="stat">
-          <span data-i18n="languages">Lugha zinazopatikana</span>
-          <strong>Kiswahili / English</strong>
-        </div>
-      </div>
-    </div>
+  <!-- DASHBOARD -->
+  <section id="page-home">
+   <div class="card">
+    <h2 id="dashboardTitle">Dashboard</h2>
+    <p class="muted" id="dashboardIntro">Muhtasari wa mapato na matumizi yako.</p>
+    <button id="refreshButton" class="btn secondary" type="button">Sasisha taarifa</button>
+   </div>
+   <div class="grid">
+    <div class="card"><div class="muted" id="homeIncomeLabel">Mapato</div><div id="homeIncome" class="stat green">TZS 0</div></div>
+    <div class="card"><div class="muted" id="homeExpenseLabel">Matumizi</div><div id="homeExpense" class="stat red">TZS 0</div></div>
+    <div class="card"><div class="muted" id="homeBalanceLabel">Salio</div><div id="homeBalance" class="stat">TZS 0</div></div>
+    <div class="card"><div class="muted" id="homeCountLabel">Miamala</div><div id="homeCount" class="stat">0</div></div>
+   </div>
+   <div class="card">
+    <h2 id="recentTitle">Miamala ya karibuni</h2>
+    <div id="recentTransactions" class="empty">Hakuna miamala bado.</div>
+   </div>
   </section>
 
-  <!-- MAIN APPLICATION -->
-  <section id="appPage" class="hidden">
-    <div class="card">
-      <h2><span data-i18n="hello">Karibu</span>, <span id="userName">Mtumiaji</span> 👋</h2>
-      <p class="small" id="userEmail"></p>
-      <p data-i18n="dashboardIntro">Huu ni muhtasari wa shughuli za shamba lako.</p>
-    </div>
-
-    <div class="nav">
-      <button class="active" onclick="showTab('dashboard',this)" data-i18n="dashboard">Muhtasari</button>
-      <button onclick="showTab('transactions',this)" data-i18n="transactions">Miamala</button>
-      <button onclick="showTab('reports',this)" data-i18n="reports">Ripoti</button>
-      <button onclick="showTab('account',this)" data-i18n="account">Akaunti</button>
-    </div>
-
-    <!-- DASHBOARD -->
-    <div id="tab-dashboard">
-      <div class="stats">
-        <div class="stat"><span data-i18n="totalIncome">Jumla ya Mapato</span><strong id="totalIncome">TZS 0</strong></div>
-        <div class="stat"><span data-i18n="totalExpenses">Jumla ya Matumizi</span><strong id="totalExpenses">TZS 0</strong></div>
-        <div class="stat"><span data-i18n="balance">Salio</span><strong id="balance">TZS 0</strong></div>
-        <div class="stat"><span data-i18n="records">Idadi ya Miamala</span><strong id="recordCount">0</strong></div>
-      </div>
-
-      <div class="card" style="margin-top:18px">
-        <h3 data-i18n="recentTransactions">Miamala ya Hivi Karibuni</h3>
-        <div class="table-wrap">
-          <table>
-            <thead><tr>
-              <th data-i18n="date">Tarehe</th>
-              <th data-i18n="type">Aina</th>
-              <th data-i18n="description">Maelezo</th>
-              <th data-i18n="amount">Kiasi</th>
-            </tr></thead>
-            <tbody id="recentBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- TRANSACTIONS -->
-    <div id="tab-transactions" class="hidden">
-      <div class="card">
-        <h2 data-i18n="addTransaction">Ongeza Muamala</h2>
-        <form id="transactionForm">
-          <div class="grid">
-            <div>
-              <label data-i18n="date">Tarehe</label>
-              <input id="txDate" type="date" required>
-            </div>
-            <div>
-              <label data-i18n="type">Aina</label>
-              <select id="txType" required>
-                <option value="income" data-i18n="income">Mapato</option>
-                <option value="expense" data-i18n="expense">Matumizi</option>
-              </select>
-            </div>
-            <div>
-              <label data-i18n="amount">Kiasi (TZS)</label>
-              <input id="txAmount" type="number" min="1" step="1" required>
-            </div>
-            <div>
-              <label data-i18n="person">Jina la Mhusika</label>
-              <input id="txPerson" maxlength="100">
-            </div>
-          </div>
-
-          <label data-i18n="description">Maelezo</label>
-          <input id="txDescription" required maxlength="250">
-
-          <button type="submit" class="primary" data-i18n="saveTransaction">Hifadhi Muamala</button>
-        </form>
-      </div>
-
-      <div class="card">
-        <h3 data-i18n="allTransactions">Miamala Yote</h3>
-        <input id="searchTransactions" data-placeholder="searchPlaceholder" placeholder="Tafuta maelezo au mhusika...">
-        <div class="table-wrap">
-          <table>
-            <thead><tr>
-              <th data-i18n="date">Tarehe</th>
-              <th data-i18n="type">Aina</th>
-              <th data-i18n="description">Maelezo</th>
-              <th data-i18n="person">Mhusika</th>
-              <th data-i18n="amount">Kiasi</th>
-              <th data-i18n="action">Kitendo</th>
-            </tr></thead>
-            <tbody id="transactionsBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- REPORTS -->
-    <div id="tab-reports" class="hidden">
-      <div class="card">
-        <h2 data-i18n="reports">Ripoti</h2>
-        <div class="grid">
-          <div><label data-i18n="fromDate">Kuanzia tarehe</label><input type="date" id="reportFrom"></div>
-          <div><label data-i18n="toDate">Mpaka tarehe</label><input type="date" id="reportTo"></div>
-        </div>
-        <div class="row">
-          <button class="primary" onclick="generateReport()" data-i18n="generateReport">Tengeneza Ripoti</button>
-          <button class="secondary" onclick="exportPDF()" data-i18n="downloadPDF">Pakua PDF</button>
-          <button class="secondary" onclick="exportExcel()" data-i18n="downloadExcel">Pakua Excel</button>
-        </div>
-      </div>
-
-      <div class="stats">
-        <div class="stat"><span data-i18n="reportIncome">Mapato ya Kipindi</span><strong id="reportIncome">TZS 0</strong></div>
-        <div class="stat"><span data-i18n="reportExpenses">Matumizi ya Kipindi</span><strong id="reportExpenses">TZS 0</strong></div>
-        <div class="stat"><span data-i18n="reportBalance">Salio la Kipindi</span><strong id="reportBalance">TZS 0</strong></div>
-      </div>
-
-      <div class="card">
-        <div class="table-wrap">
-          <table>
-            <thead><tr>
-              <th data-i18n="date">Tarehe</th>
-              <th data-i18n="type">Aina</th>
-              <th data-i18n="description">Maelezo</th>
-              <th data-i18n="person">Mhusika</th>
-              <th data-i18n="amount">Kiasi</th>
-            </tr></thead>
-            <tbody id="reportBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ACCOUNT -->
-    <div id="tab-account" class="hidden">
-      <div class="card">
-        <h2 data-i18n="accountSettings">Mipangilio ya Akaunti</h2>
-        <form id="nameForm">
-          <label data-i18n="fullName">Jina kamili</label>
-          <input id="editName" required maxlength="80">
-          <button class="primary" type="submit" data-i18n="saveName">Hifadhi Jina</button>
-        </form>
-
-        <hr>
-
-        <h3 data-i18n="changePassword">Badilisha Nenosiri</h3>
-        <form id="passwordForm">
-          <label data-i18n="currentPassword">Nenosiri la sasa</label>
-          <input id="currentPassword" type="password" required autocomplete="current-password">
-
-          <label data-i18n="newPassword">Nenosiri jipya</label>
-          <input id="newPassword" type="password" required minlength="6" autocomplete="new-password">
-
-          <label data-i18n="confirmPassword">Thibitisha nenosiri</label>
-          <input id="confirmNewPassword" type="password" required minlength="6" autocomplete="new-password">
-
-          <button class="primary" type="submit" data-i18n="updatePassword">Badilisha Nenosiri</button>
-        </form>
-      </div>
-
-      <div class="card">
-        <h2 data-i18n="about">Kuhusu Mradi</h2>
-        <p><b data-i18n="projectName">Jina la mradi:</b> I&E ShambaSmart</p>
-        <p><b data-i18n="projectOwner">Mmiliki wa Mradi:</b> Ibrahim</p>
-        <p><b data-i18n="projectSupervisor">Msimamizi wa Mradi:</b> Esromu</p>
-        <p><b data-i18n="languages">Lugha:</b> Kiswahili / English</p>
-      </div>
-    </div>
+  <!-- ADD TRANSACTION -->
+  <section id="page-add" class="hidden">
+   <div class="card">
+    <h2 id="addTitle">Ongeza muamala</h2>
+    <form id="transactionForm">
+     <div class="field">
+      <label id="typeLabel" for="transactionType">Aina</label>
+      <select id="transactionType" required>
+       <option value="income">Mapato</option>
+       <option value="expense">Matumizi</option>
+      </select>
+     </div>
+     <div class="field">
+      <label id="dateLabel" for="transactionDate">Tarehe</label>
+      <input id="transactionDate" type="date" required>
+     </div>
+     <div class="field">
+      <label id="descriptionLabel" for="transactionDescription">Maelezo</label>
+      <input id="transactionDescription" maxlength="200" placeholder="Mfano: Mauzo ya mahindi" required>
+     </div>
+     <div class="field">
+      <label id="personLabel" for="transactionPerson">Mhusika (si lazima)</label>
+      <input id="transactionPerson" maxlength="100" placeholder="Mfano: Juma">
+     </div>
+     <div class="field">
+      <label id="amountLabel" for="transactionAmount">Kiasi (TZS)</label>
+      <input id="transactionAmount" type="number" min="1" step="1" inputmode="numeric" required>
+     </div>
+     <button id="saveTransactionButton" class="btn full" type="submit">Hifadhi muamala</button>
+    </form>
+   </div>
   </section>
-</main>
 
-<footer>
-  <div><b>I&E ShambaSmart</b></div>
-  <div data-i18n="footerText">Imetengenezwa kwa ajili ya kurahisisha usimamizi wa shamba.</div>
-  <div>Project Owner: Ibrahim | Project Supervisor: Esromu</div>
-</footer>
+  <!-- ALL TRANSACTIONS -->
+  <section id="page-transactions" class="hidden">
+   <div class="card">
+    <h2 id="allTitle">Miamala yote</h2>
+    <div class="field">
+     <label id="searchLabel" for="transactionSearch">Tafuta muamala</label>
+     <input id="transactionSearch" placeholder="Maelezo au mhusika">
+    </div>
+    <div id="allTransactions" class="empty">Hakuna miamala bado.</div>
+   </div>
+  </section>
+
+  <!-- REPORTS -->
+  <section id="page-reports" class="hidden">
+   <div class="card">
+    <h2 id="reportsTitle">Ripoti za fedha</h2>
+    <div class="field">
+     <label id="startLabel" for="reportStart">Kuanzia tarehe</label>
+     <input id="reportStart" type="date">
+    </div>
+    <div class="field">
+     <label id="endLabel" for="reportEnd">Mpaka tarehe</label>
+     <input id="reportEnd" type="date">
+    </div>
+    <button id="generateReportButton" class="btn full" type="button">Tengeneza ripoti</button>
+    <div class="grid" style="margin-top:10px">
+     <button id="downloadPDFButton" class="btn secondary" type="button">Pakua PDF</button>
+     <button id="downloadExcelButton" class="btn secondary" type="button">Pakua Excel</button>
+    </div>
+   </div>
+
+   <div class="grid">
+    <div class="card"><div class="muted" id="reportIncomeLabel">Mapato</div><div id="reportIncome" class="stat green">TZS 0</div></div>
+    <div class="card"><div class="muted" id="reportExpenseLabel">Matumizi</div><div id="reportExpense" class="stat red">TZS 0</div></div>
+    <div class="card"><div class="muted" id="reportBalanceLabel">Salio</div><div id="reportBalance" class="stat">TZS 0</div></div>
+    <div class="card"><div class="muted" id="reportCountLabel">Miamala</div><div id="reportCount" class="stat">0</div></div>
+   </div>
+
+   <div class="card">
+    <h2 id="periodTransactionsTitle">Miamala katika kipindi</h2>
+    <div id="reportTransactions" class="empty">Tengeneza ripoti ili kuona taarifa.</div>
+   </div>
+  </section>
+
+  <!-- ACCOUNT + PROJECT INFORMATION -->
+  <section id="page-account" class="hidden">
+   <div class="card">
+    <h2 id="accountTitle">Akaunti yangu</h2>
+    <p><strong id="accountNameLabel">Jina:</strong> <span id="accountName">—</span></p>
+    <p><strong id="accountEmailLabel">Barua pepe:</strong> <span id="accountEmail">—</span></p>
+    <p class="muted" id="accountNote">Taarifa zako zimeunganishwa na akaunti yako.</p>
+   </div>
+
+   <div class="card">
+    <h2 id="projectTitle">Kuhusu Mradi</h2>
+    <p><strong id="ownerLabel">Mmiliki wa Mradi:</strong> Ibrahim</p>
+    <p><strong id="supervisorLabel">Msimamizi wa Mradi:</strong> Esromu</p>
+    <p><strong id="projectNameLabel">Jina la Mradi:</strong> I & E ShambaSmart</p>
+    <p><strong id="projectLanguageLabel">Lugha:</strong> Kiswahili / English</p>
+   </div>
+  </section>
+ </main>
+
+ <nav class="tabs">
+  <button data-page="home" class="active" type="button">🏠<br><span data-sw="Nyumbani" data-en="Home">Nyumbani</span></button>
+  <button data-page="add" type="button">➕<br><span data-sw="Ongeza" data-en="Add">Ongeza</span></button>
+  <button data-page="transactions" type="button">📋<br><span data-sw="Miamala" data-en="Transactions">Miamala</span></button>
+  <button data-page="reports" type="button">📊<br><span data-sw="Ripoti" data-en="Reports">Ripoti</span></button>
+  <button data-page="account" type="button">👤<br><span data-sw="Akaunti" data-en="Account">Akaunti</span></button>
+ </nav>
+</section>
 
 <script>
-/* Firebase configuration */
-const firebaseConfig = {
-  apiKey: "AIzaSyB8yfl5dkqoN-skeAAJtOwULc_iTyr9tPk",
-  authDomain: "ie-shambasmart.firebaseapp.com",
-  projectId: "ie-shambasmart",
-  storageBucket: "ie-shambasmart.firebasestorage.app",
-  messagingSenderId: "895715686352",
-  appId: "1:895715686352:web:baa408a762fd60f9cf6bd5",
-  measurementId: "G-37FEVMD62V"
+setTimeout(function(){
+ const l=document.getElementById('loadingScreen');
+ if(l&&!l.classList.contains('hidden')){
+  document.getElementById('loadingText').textContent='Programu imechelewa kuanza.';
+  document.getElementById('loadingError').textContent='Kagua intaneti kisha jaribu tena.';
+  document.getElementById('loadingError').classList.remove('hidden');
+  document.getElementById('reloadButton').classList.remove('hidden');
+ }
+},10000);
+</script>
+
+<script type="module">
+import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
+import {
+ getAuth,onAuthStateChanged,createUserWithEmailAndPassword,
+ signInWithEmailAndPassword,updateProfile,sendPasswordResetEmail,signOut
+} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+import {
+ getFirestore,collection,addDoc,getDocs,query,where,setDoc,doc,serverTimestamp
+} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+
+const firebaseConfig={
+ apiKey:"AIzaSyB8yfl5dkqoN-skeAAJtOwULc_iTyr9tPk",
+ authDomain:"ie-shambasmart.firebaseapp.com",
+ projectId:"ie-shambasmart",
+ storageBucket:"ie-shambasmart.firebasestorage.app",
+ messagingSenderId:"895715686352",
+ appId:"1:895715686352:web:baa408a762fd60f9cf6bd5",
+ measurementId:"G-37FEVMD62V"
 };
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const $=id=>document.getElementById(id);
 
-const FARM_ID = "shamba-pamoja-01";
-let currentUser = null;
-let allTransactions = [];
-let reportTransactions = [];
-let lang = localStorage.getItem("shambaLang") || "sw";
+let user=null;
+let transactions=[];
+let reportRows=[];
+let appLanguage=localStorage.getItem('shambasmart-language')||'sw';
 
-const translations = {
-  sw: {
-    welcome:"Karibu I&E ShambaSmart",
-    welcomeText:"Simamia shughuli za shamba lako sehemu moja.",
-    login:"Ingia kwenye akaunti", email:"Barua pepe", password:"Nenosiri",
-    loginBtn:"Ingia", forgot:"Umesahau nenosiri?", register:"Fungua akaunti mpya",
-    fullName:"Jina kamili", confirmPassword:"Thibitisha nenosiri",
-    registerBtn:"Jisajili", about:"Kuhusu Mradi", projectName:"Jina la mradi",
-    projectOwner:"Mmiliki wa Mradi", projectSupervisor:"Msimamizi wa Mradi",
-    languages:"Lugha zinazopatikana", hello:"Karibu", dashboardIntro:"Huu ni muhtasari wa shughuli za shamba lako.",
-    dashboard:"Muhtasari", transactions:"Miamala", reports:"Ripoti", account:"Akaunti",
-    totalIncome:"Jumla ya Mapato", totalExpenses:"Jumla ya Matumizi", balance:"Salio",
-    records:"Idadi ya Miamala", recentTransactions:"Miamala ya Hivi Karibuni",
-    date:"Tarehe", type:"Aina", description:"Maelezo", amount:"Kiasi",
-    addTransaction:"Ongeza Muamala", income:"Mapato", expense:"Matumizi",
-    person:"Jina la Mhusika", saveTransaction:"Hifadhi Muamala",
-    allTransactions:"Miamala Yote", action:"Kitendo",
-    searchPlaceholder:"Tafuta maelezo au mhusika...", fromDate:"Kuanzia tarehe",
-    toDate:"Mpaka tarehe", generateReport:"Tengeneza Ripoti",
-    downloadPDF:"Pakua PDF", downloadExcel:"Pakua Excel",
-    reportIncome:"Mapato ya Kipindi", reportExpenses:"Matumizi ya Kipindi",
-    reportBalance:"Salio la Kipindi", accountSettings:"Mipangilio ya Akaunti",
-    saveName:"Hifadhi Jina", changePassword:"Badilisha Nenosiri",
-    currentPassword:"Nenosiri la sasa", newPassword:"Nenosiri jipya",
-    updatePassword:"Badilisha Nenosiri", footerText:"Imetengenezwa kwa ajili ya kurahisisha usimamizi wa shamba.",
-    logout:"Toka", noData:"Hakuna taarifa", delete:"Futa", confirmDelete:"Una uhakika unataka kufuta muamala huu?",
-    loginSuccess:"Umeingia kikamilifu.", registerSuccess:"Akaunti imefunguliwa.",
-    transactionSaved:"Muamala umehifadhiwa.", nameSaved:"Jina limebadilishwa.",
-    passwordChanged:"Nenosiri limebadilishwa.", resetSent:"Maelekezo ya kurejesha nenosiri yametumwa kwenye barua pepe yako.",
-    enterEmail:"Weka barua pepe yako kwanza.", invalidDates:"Tarehe ya kuanzia haiwezi kuwa baada ya tarehe ya mwisho.",
-    noReport:"Hakuna miamala katika kipindi hiki.", reportTitle:"Ripoti ya Shamba",
-    reportPeriod:"Kipindi", incomeLabel:"Mapato", expenseLabel:"Matumizi", balanceLabel:"Salio",
-    logoutConfirm:"Unataka kutoka kwenye akaunti?"
-  },
-  en: {
-    welcome:"Welcome to I&E ShambaSmart",
-    welcomeText:"Manage your farm activities in one place.",
-    login:"Sign in", email:"Email address", password:"Password",
-    loginBtn:"Sign in", forgot:"Forgot password?", register:"Create a new account",
-    fullName:"Full name", confirmPassword:"Confirm password",
-    registerBtn:"Register", about:"About the Project", projectName:"Project name",
-    projectOwner:"Project Owner", projectSupervisor:"Project Supervisor",
-    languages:"Available languages", hello:"Welcome", dashboardIntro:"Here is an overview of your farm activities.",
-    dashboard:"Dashboard", transactions:"Transactions", reports:"Reports", account:"Account",
-    totalIncome:"Total Income", totalExpenses:"Total Expenses", balance:"Balance",
-    records:"Number of Transactions", recentTransactions:"Recent Transactions",
-    date:"Date", type:"Type", description:"Description", amount:"Amount",
-    addTransaction:"Add Transaction", income:"Income", expense:"Expense",
-    person:"Person", saveTransaction:"Save Transaction",
-    allTransactions:"All Transactions", action:"Action",
-    searchPlaceholder:"Search description or person...", fromDate:"From date",
-    toDate:"To date", generateReport:"Generate Report",
-    downloadPDF:"Download PDF", downloadExcel:"Download Excel",
-    reportIncome:"Period Income", reportExpenses:"Period Expenses",
-    reportBalance:"Period Balance", accountSettings:"Account Settings",
-    saveName:"Save Name", changePassword:"Change Password",
-    currentPassword:"Current password", newPassword:"New password",
-    updatePassword:"Update Password", footerText:"Made to simplify farm management.",
-    logout:"Log out", noData:"No records found", delete:"Delete", confirmDelete:"Are you sure you want to delete this transaction?",
-    loginSuccess:"You have signed in successfully.", registerSuccess:"Account created successfully.",
-    transactionSaved:"Transaction saved.", nameSaved:"Name updated.",
-    passwordChanged:"Password updated.", resetSent:"Password reset instructions have been sent to your email.",
-    enterEmail:"Enter your email address first.", invalidDates:"The start date cannot be after the end date.",
-    noReport:"No transactions found in this period.", reportTitle:"Farm Report",
-    reportPeriod:"Period", incomeLabel:"Income", expenseLabel:"Expenses", balanceLabel:"Balance",
-    logoutConfirm:"Do you want to log out?"
-  }
+const tr={
+ sw:{
+  welcome:'Karibu',dashboard:'Dashboard',
+  dashboardIntro:'Muhtasari wa mapato na matumizi yako.',
+  refresh:'Sasisha taarifa',income:'Mapato',expense:'Matumizi',
+  balance:'Salio',count:'Miamala',recent:'Miamala ya karibuni',
+  add:'Ongeza muamala',type:'Aina',date:'Tarehe',
+  description:'Maelezo',person:'Mhusika (si lazima)',
+  amount:'Kiasi (TZS)',save:'Hifadhi muamala',
+  all:'Miamala yote',search:'Tafuta muamala',
+  searchPlaceholder:'Maelezo au mhusika',
+  reports:'Ripoti za fedha',start:'Kuanzia tarehe',end:'Mpaka tarehe',
+  generate:'Tengeneza ripoti',pdf:'Pakua PDF',excel:'Pakua Excel',
+  period:'Miamala katika kipindi',account:'Akaunti yangu',
+  name:'Jina:',email:'Barua pepe:',
+  accountNote:'Taarifa zako zimeunganishwa na akaunti yako.',
+  project:'Kuhusu Mradi',owner:'Mmiliki wa Mradi:',
+  supervisor:'Msimamizi wa Mradi:',projectName:'Jina la Mradi:',
+  language:'Lugha:',logout:'Toka',home:'Nyumbani',
+  noData:'Hakuna miamala ya kuonyesha.',
+  noReport:'Hakuna miamala katika kipindi hiki.',
+  invalidDates:'Tarehe ya kuanzia haiwezi kuwa baada ya tarehe ya mwisho.',
+  report:'Ripoti ya Shamba',reportPeriod:'Kipindi',
+  saved:'Muamala umehifadhiwa kwa mafanikio.',
+  registerSuccess:'Akaunti imefunguliwa kwa mafanikio.',
+  passwordReset:'Maelekezo yametumwa kwenye barua pepe yako.',
+  enterEmail:'Andika barua pepe yako kwanza.',
+  error:'Hitilafu imetokea.'
+ },
+ en:{
+  welcome:'Welcome',dashboard:'Dashboard',
+  dashboardIntro:'Overview of your farm income and expenses.',
+  refresh:'Refresh data',income:'Income',expense:'Expenses',
+  balance:'Balance',count:'Transactions',recent:'Recent transactions',
+  add:'Add transaction',type:'Type',date:'Date',
+  description:'Description',person:'Person (optional)',
+  amount:'Amount (TZS)',save:'Save transaction',
+  all:'All transactions',search:'Search transactions',
+  searchPlaceholder:'Description or person',
+  reports:'Financial reports',start:'Start date',end:'End date',
+  generate:'Generate report',pdf:'Download PDF',excel:'Download Excel',
+  period:'Transactions in period',account:'My account',
+  name:'Name:',email:'Email:',
+  accountNote:'Your information is linked to your account.',
+  project:'About the Project',owner:'Project Owner:',
+  supervisor:'Project Supervisor:',projectName:'Project name:',
+  language:'Language:',logout:'Log out',home:'Home',
+  noData:'No transactions to display.',
+  noReport:'No transactions found in this period.',
+  invalidDates:'The start date cannot be after the end date.',
+  report:'Farm Report',reportPeriod:'Period',
+  saved:'Transaction saved successfully.',
+  registerSuccess:'Account created successfully.',
+  passwordReset:'Instructions have been sent to your email.',
+  enterEmail:'Enter your email address first.',
+  error:'An error occurred.'
+ }
 };
 
-function t(key) {
-  return translations[lang][key] || translations.sw[key] || key;
+const money=n=>new Intl.NumberFormat(
+ appLanguage==='sw'?'sw-TZ':'en-TZ',
+ {style:'currency',currency:'TZS',maximumFractionDigits:0}
+).format(Number(n)||0);
+
+const escapeHTML=s=>String(s??'').replace(/[&<>"']/g,c=>({
+ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+}[c]));
+
+function msg(id,text,type='info'){
+ $(id).innerHTML='<div class="notice '+type+'">'+escapeHTML(text)+'</div>';
+}
+function screen(which){
+ $('loadingScreen').classList.add('hidden');
+ $('authScreen').classList.toggle('hidden',which!=='auth');
+ $('appScreen').classList.toggle('hidden',which!=='app');
+}
+function errorText(e){
+ const errors={
+  'auth/invalid-credential':'Barua pepe au nenosiri si sahihi.',
+  'auth/email-already-in-use':'Barua pepe hii tayari imesajiliwa.',
+  'auth/weak-password':'Nenosiri lazima liwe na angalau herufi 6.',
+  'auth/invalid-email':'Barua pepe si sahihi.',
+  'auth/too-many-requests':'Umejaribu mara nyingi. Subiri kisha ujaribu tena.',
+  'auth/network-request-failed':'Kagua muunganisho wa intaneti.',
+  'auth/unauthorized-domain':'Ongeza tovuti yako kwenye Authorized domains za Firebase.',
+  'unavailable':'Firebase haipatikani. Kagua intaneti.',
+  'permission-denied':'Firebase imezuia ombi. Kagua Firestore Security Rules.'
+ };
+ return errors[e?.code]||e?.message||tr[appLanguage].error;
+}
+function today(){
+ const d=new Date();
+ return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 }
 
-function setLang(newLang) {
-  lang = newLang;
-  localStorage.setItem("shambaLang", lang);
-  document.documentElement.lang = lang;
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    const key = el.getAttribute("data-i18n");
-    el.textContent = t(key);
+$('transactionDate').value=today();
+$('reportEnd').value=today();
+
+$('showRegister').onclick=()=>{
+ $('loginPanel').classList.add('hidden');
+ $('registerPanel').classList.remove('hidden');
+ $('authMessage').innerHTML='';
+};
+$('showLogin').onclick=()=>{
+ $('registerPanel').classList.add('hidden');
+ $('loginPanel').classList.remove('hidden');
+ $('authMessage').innerHTML='';
+};
+
+$('loginForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const b=e.submitter;
+ b.disabled=true;b.textContent='Inaingia...';
+ try{
+  await signInWithEmailAndPassword(auth,$('loginEmail').value.trim(),$('loginPassword').value);
+ }catch(err){
+  msg('authMessage',errorText(err),'error');
+ }finally{
+  b.disabled=false;b.textContent='Ingia';
+ }
+});
+
+$('registerForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const b=e.submitter;
+ b.disabled=true;b.textContent='Inasajili...';
+ try{
+  const name=$('registerName').value.trim();
+  const email=$('registerEmail').value.trim();
+  const cred=await createUserWithEmailAndPassword(auth,email,$('registerPassword').value);
+  await updateProfile(cred.user,{displayName:name});
+  await setDoc(doc(db,'users',cred.user.uid),{
+   uid:cred.user.uid,name,email,role:'user',createdAt:serverTimestamp()
   });
-  document.querySelectorAll("[data-placeholder]").forEach(el => {
-    el.placeholder = t(el.dataset.placeholder);
+  msg('authMessage',tr[appLanguage].registerSuccess,'success');
+ }catch(err){
+  msg('authMessage',errorText(err),'error');
+ }finally{
+  b.disabled=false;b.textContent='Jisajili';
+ }
+});
+
+$('forgotPassword').onclick=async()=>{
+ const email=$('loginEmail').value.trim();
+ if(!email){msg('authMessage',tr[appLanguage].enterEmail);return;}
+ try{
+  await sendPasswordResetEmail(auth,email);
+  msg('authMessage',tr[appLanguage].passwordReset,'success');
+ }catch(err){msg('authMessage',errorText(err),'error');}
+};
+
+$('logoutButton').onclick=()=>signOut(auth).catch(e=>msg('appMessage',errorText(e),'error'));
+$('refreshButton').onclick=loadTransactions;
+$('generateReportButton').onclick=()=>makeReport(true);
+$('transactionSearch').oninput=renderTransactions;
+document.querySelectorAll('[data-page]').forEach(b=>b.onclick=()=>openPage(b.dataset.page));
+$('langSw').onclick=()=>setLanguage('sw');
+$('langEn').onclick=()=>setLanguage('en');
+$('downloadPDFButton').onclick=exportPDF;
+$('downloadExcelButton').onclick=exportExcel;
+
+function setLanguage(language){
+ appLanguage=language;
+ localStorage.setItem('shambasmart-language',language);
+ document.documentElement.lang=language;
+ const x=tr[language];
+
+ $('welcomeText').textContent=x.welcome+', '+(user?.displayName||user?.email||'');
+ $('logoutButton').textContent=x.logout;
+ $('dashboardTitle').textContent=x.dashboard;
+ $('dashboardIntro').textContent=x.dashboardIntro;
+ $('refreshButton').textContent=x.refresh;
+ $('homeIncomeLabel').textContent=x.income;
+ $('homeExpenseLabel').textContent=x.expense;
+ $('homeBalanceLabel').textContent=x.balance;
+ $('homeCountLabel').textContent=x.count;
+ $('recentTitle').textContent=x.recent;
+ $('addTitle').textContent=x.add;
+ $('typeLabel').textContent=x.type;
+ $('dateLabel').textContent=x.date;
+ $('descriptionLabel').textContent=x.description;
+ $('personLabel').textContent=x.person;
+ $('amountLabel').textContent=x.amount;
+ $('saveTransactionButton').textContent=x.save;
+ $('allTitle').textContent=x.all;
+ $('searchLabel').textContent=x.search;
+ $('transactionSearch').placeholder=x.searchPlaceholder;
+ $('reportsTitle').textContent=x.reports;
+ $('startLabel').textContent=x.start;
+ $('endLabel').textContent=x.end;
+ $('generateReportButton').textContent=x.generate;
+ $('downloadPDFButton').textContent=x.pdf;
+ $('downloadExcelButton').textContent=x.excel;
+ $('reportIncomeLabel').textContent=x.income;
+ $('reportExpenseLabel').textContent=x.expense;
+ $('reportBalanceLabel').textContent=x.balance;
+ $('reportCountLabel').textContent=x.count;
+ $('periodTransactionsTitle').textContent=x.period;
+ $('accountTitle').textContent=x.account;
+ $('accountNameLabel').textContent=x.name;
+ $('accountEmailLabel').textContent=x.email;
+ $('accountNote').textContent=x.accountNote;
+ $('projectTitle').textContent=x.project;
+ $('ownerLabel').textContent=x.owner;
+ $('supervisorLabel').textContent=x.supervisor;
+ $('projectNameLabel').textContent=x.projectName;
+ $('projectLanguageLabel').textContent=x.language;
+
+ document.querySelectorAll('[data-sw][data-en]').forEach(el=>{
+  el.textContent=language==='sw'?el.dataset.sw:el.dataset.en;
+ });
+ $('transactionType').options[0].textContent=x.income;
+ $('transactionType').options[1].textContent=x.expense;
+
+ renderTransactions();
+ makeReport(false);
+}
+
+function openPage(page){
+ ['home','add','transactions','reports','account'].forEach(p=>{
+  $('page-'+p).classList.toggle('hidden',p!==page);
+ });
+ document.querySelectorAll('[data-page]').forEach(b=>{
+  b.classList.toggle('active',b.dataset.page===page);
+ });
+ if(page==='transactions')renderTransactions();
+ if(page==='reports')makeReport(false);
+}
+
+$('transactionForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ if(!user){msg('appMessage','Ingia kwanza.','error');return;}
+ const amount=Number($('transactionAmount').value);
+ if(!Number.isFinite(amount)||amount<=0){
+  msg('appMessage','Weka kiasi kinachozidi sifuri.','error');return;
+ }
+ const b=$('saveTransactionButton');
+ b.disabled=true;
+ try{
+  await addDoc(collection(db,'transactions'),{
+   uid:user.uid,
+   date:$('transactionDate').value,
+   type:$('transactionType').value,
+   description:$('transactionDescription').value.trim(),
+   person:$('transactionPerson').value.trim(),
+   amount,
+   createdAt:serverTimestamp()
   });
-  document.getElementById("logoutBtn").textContent = t("logout");
+  msg('appMessage',tr[appLanguage].saved,'success');
+  $('transactionDescription').value='';
+  $('transactionPerson').value='';
+  $('transactionAmount').value='';
+  $('transactionDate').value=today();
+  await loadTransactions();
+  openPage('transactions');
+ }catch(err){
+  msg('appMessage',errorText(err),'error');
+ }finally{b.disabled=false;}
+});
+
+function tableHTML(list){
+ if(!list.length)return '<div class="empty">'+escapeHTML(tr[appLanguage].noData)+'</div>';
+ const x=tr[appLanguage];
+ return '<div class="table-wrap"><table><thead><tr><th>'+x.date+'</th><th>'+x.type+'</th><th>'+x.description+'</th><th>'+x.person+'</th><th>'+x.amount+'</th></tr></thead><tbody>'+
+ list.map(t=>'<tr><td>'+escapeHTML(t.date||'—')+'</td><td class="'+(t.type==='income'?'green':'red')+'">'+escapeHTML(t.type==='income'?x.income:x.expense)+'</td><td>'+escapeHTML(t.description)+'</td><td>'+escapeHTML(t.person||'—')+'</td><td>'+escapeHTML(money(t.amount))+'</td></tr>').join('')+
+ '</tbody></table></div>';
+}
+
+function renderTransactions(){
+ if(!$('transactionSearch'))return;
+ const term=$('transactionSearch').value.trim().toLowerCase();
+ const list=transactions.filter(t=>
+  (String(t.description||'')+' '+String(t.person||'')).toLowerCase().includes(term)
+ );
+ $('allTransactions').innerHTML=tableHTML(list);
+ $('recentTransactions').innerHTML=tableHTML(transactions.slice(0,5));
+}
+
+async function loadTransactions(){
+ if(!user)return;
+ try{
+  const q=query(collection(db,'transactions'),where('uid','==',user.uid));
+  const snap=await getDocs(q);
+  transactions=snap.docs.map(d=>({id:d.id,...d.data()}))
+   .sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));
+
+  const income=transactions.filter(t=>t.type==='income').reduce((s,t)=>s+(Number(t.amount)||0),0);
+  const expense=transactions.filter(t=>t.type==='expense').reduce((s,t)=>s+(Number(t.amount)||0),0);
+
+  $('homeIncome').textContent=money(income);
+  $('homeExpense').textContent=money(expense);
+  $('homeBalance').textContent=money(income-expense);
+  $('homeCount').textContent=transactions.length;
+  $('welcomeText').textContent=tr[appLanguage].welcome+', '+(user.displayName||user.email||'');
+  $('accountName').textContent=user.displayName||'—';
+  $('accountEmail').textContent=user.email||'—';
+
   renderTransactions();
-  renderDashboard();
-  if (!document.getElementById("tab-reports").classList.contains("hidden")) {
-    generateReport(false);
-  }
+  makeReport(false);
+ }catch(err){
+  msg('appMessage',errorText(err),'error');
+  $('allTransactions').textContent='Imeshindwa kupakia miamala.';
+ }
 }
 
-function showMessage(message, type = "notice") {
-  const box = document.getElementById("message");
-  box.textContent = message;
-  box.className = "notice " + type;
-  box.classList.remove("hidden");
-  window.scrollTo({top:0,behavior:"smooth"});
-  setTimeout(() => box.classList.add("hidden"), 5000);
+function makeReport(showErrors=true){
+ const start=$('reportStart').value;
+ const end=$('reportEnd').value;
+ if(start&&end&&start>end){
+  if(showErrors)msg('appMessage',tr[appLanguage].invalidDates,'error');
+  return;
+ }
+ reportRows=transactions.filter(t=>
+  (!start||String(t.date||'')>=start)&&(!end||String(t.date||'')<=end)
+ );
+ const income=reportRows.filter(t=>t.type==='income').reduce((s,t)=>s+(Number(t.amount)||0),0);
+ const expense=reportRows.filter(t=>t.type==='expense').reduce((s,t)=>s+(Number(t.amount)||0),0);
+ $('reportIncome').textContent=money(income);
+ $('reportExpense').textContent=money(expense);
+ $('reportBalance').textContent=money(income-expense);
+ $('reportCount').textContent=reportRows.length;
+ $('reportTransactions').innerHTML=tableHTML(reportRows);
 }
 
-function friendlyError(error) {
-  const map = {
-    "auth/email-already-in-use":"Barua pepe hii tayari imesajiliwa.",
-    "auth/invalid-email":"Barua pepe si sahihi.",
-    "auth/weak-password":"Nenosiri lazima liwe na angalau herufi 6.",
-    "auth/user-not-found":"Akaunti haijapatikana.",
-    "auth/wrong-password":"Nenosiri si sahihi.",
-    "auth/invalid-credential":"Barua pepe au nenosiri si sahihi.",
-    "auth/too-many-requests":"Umejaribu mara nyingi. Subiri kidogo ujaribu tena.",
-    "auth/requires-recent-login":"Toka kisha ingia tena kabla ya kufanya mabadiliko haya.",
-    "permission-denied":"Huna ruhusa ya kufanya kitendo hiki. Kagua sheria za Firebase Firestore.",
-    "unavailable":"Mtandao au huduma haipatikani kwa sasa."
-  };
-  return map[error.code] || error.message || "Hitilafu imetokea.";
+function exportPDF(){
+ makeReport(true);
+ if($('reportStart').value&&$('reportEnd').value&&$('reportStart').value>$('reportEnd').value)return;
+ if(!reportRows.length){msg('appMessage',tr[appLanguage].noReport,'info');return;}
+ if(!window.jspdf||!window.jspdf.jsPDF){
+  msg('appMessage','PDF library haijapakia. Kagua intaneti.','error');return;
+ }
+ const {jsPDF}=window.jspdf;
+ const pdf=new jsPDF();
+ const x=tr[appLanguage];
+
+ pdf.setFontSize(17);
+ pdf.text('I & E ShambaSmart - '+x.report,14,18);
+ pdf.setFontSize(10);
+ pdf.text('Project Owner: Ibrahim | Project Supervisor: Esromu',14,26);
+ pdf.text(x.reportPeriod+': '+($('reportStart').value||'—')+' - '+($('reportEnd').value||'—'),14,33);
+
+ pdf.autoTable({
+  startY:39,
+  head:[[x.date,x.type,x.description,x.person,x.amount]],
+  body:reportRows.map(t=>[
+   t.date||'',
+   t.type==='income'?x.income:x.expense,
+   t.description||'',
+   t.person||'—',
+   Number(t.amount||0).toLocaleString()
+  ]),
+  styles:{fontSize:8},
+  headStyles:{fillColor:[22,101,52]}
+ });
+ pdf.save('IE-ShambaSmart-Ripoti.pdf');
 }
 
-/* Login */
-document.getElementById("loginForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  try {
-    await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
-    await auth.signInWithEmailAndPassword(
-      document.getElementById("loginEmail").value.trim(),
-      document.getElementById("loginPassword").value
-    );
-    showMessage(t("loginSuccess"), "success");
-  } catch (err) {
-    showMessage(friendlyError(err), "error");
-  }
+function exportExcel(){
+ makeReport(true);
+ if($('reportStart').value&&$('reportEnd').value&&$('reportStart').value>$('reportEnd').value)return;
+ if(!reportRows.length){msg('appMessage',tr[appLanguage].noReport,'info');return;}
+ if(!window.XLSX){
+  msg('appMessage','Excel library haijapakia. Kagua intaneti.','error');return;
+ }
+ const x=tr[appLanguage];
+ const rows=reportRows.map(t=>({
+  [x.date]:t.date||'',
+  [x.type]:t.type==='income'?x.income:x.expense,
+  [x.description]:t.description||'',
+  [x.person]:t.person||'',
+  [x.amount]:Number(t.amount||0)
+ }));
+ const ws=XLSX.utils.json_to_sheet(rows);
+ ws['!cols']=[{wch:14},{wch:14},{wch:30},{wch:22},{wch:18}];
+ const wb=XLSX.utils.book_new();
+ XLSX.utils.book_append_sheet(wb,ws,'ShambaSmart');
+ XLSX.writeFile(wb,'IE-ShambaSmart-Ripoti.xlsx');
+}
+
+onAuthStateChanged(auth,async current=>{
+ user=current;
+ if(current){
+  screen('app');
+  $('appMessage').innerHTML='';
+  setLanguage(appLanguage);
+  await loadTransactions();
+ }else{
+  screen('auth');
+  transactions=[];
+ }
 });
 
-/* Registration */
-document.getElementById("registerForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  const name = document.getElementById("registerName").value.trim();
-  const email = document.getElementById("registerEmail").value.trim();
-  const password = document.getElementById("registerPassword").value;
-  const confirm = document.getElementById("registerConfirm").value;
-
-  if (password !== confirm) {
-    showMessage(t("confirmPassword") + ": nenosiri halifanani.", "error");
-    return;
-  }
-
-  try {
-    const result = await auth.createUserWithEmailAndPassword(email, password);
-    await result.user.updateProfile({displayName:name});
-    await db.collection("users").doc(result.user.uid).set({
-      uid:result.user.uid,
-      name:name,
-      email:email,
-      farmId:FARM_ID,
-      createdAt:firebase.firestore.FieldValue.serverTimestamp()
-    }, {merge:true});
-    showMessage(t("registerSuccess"), "success");
-  } catch (err) {
-    showMessage(friendlyError(err), "error");
-  }
-});
-
-/* Password reset */
-async function resetPassword() {
-  const email = document.getElementById("loginEmail").value.trim();
-  if (!email) {
-    showMessage(t("enterEmail"), "error");
-    document.getElementById("loginEmail").focus();
-    return;
-  }
-  try {
-    await auth.sendPasswordResetEmail(email);
-    showMessage(t("resetSent"), "success");
-  } catch (err) {
-    showMessage(friendlyError(err), "error");
-  }
-}
-
-/* Authentication state */
-auth.onAuthStateChanged(async user => {
-  currentUser = user;
-  const authPage = document.getElementById("authPage");
-  const appPage = document.getElementById("appPage");
-
-  if (user) {
-    authPage.classList.add("hidden");
-    appPage.classList.remove("hidden");
-    document.getElementById("logoutBtn").classList.remove("hidden");
-    document.getElementById("userEmail").textContent = user.email || "";
-    document.getElementById("editName").value = user.displayName || "";
-    document.getElementById("userName").textContent = user.displayName || (lang === "sw" ? "Mtumiaji" : "User");
-    document.getElementById("txDate").value = new Date().toISOString().slice(0,10);
-    await loadTransactions();
-  } else {
-    authPage.classList.remove("hidden");
-    appPage.classList.add("hidden");
-    document.getElementById("logoutBtn").classList.add("hidden");
-    allTransactions = [];
-    renderDashboard();
-    renderTransactions();
-  }
-});
-
-async function logout() {
-  if (!confirm(t("logoutConfirm"))) return;
-  try {
-    await auth.signOut();
-    showMessage(t("logout"), "success");
-  } catch (err) {
-    showMessage(friendlyError(err), "error");
-  }
-}
-
-/* Load only current farm's transactions */
-async function loadTransactions() {
-  if (!currentUser) return;
-  try {
-    const snapshot = await db.collection("transactions")
-      .where("farmId", "==", FARM_ID)
-      .get();
-
-    allTransactions = snapshot.docs.map(doc => ({id:doc.id, ...doc.data()}));
-    allTransactions.sort((a,b) => String(b.date || "").localeCompare(String(a.date || "")));
-    renderDashboard();
-    renderTransactions();
-  } catch (err) {
-    showMessage(friendlyError(err), "error");
-  }
-}
-
-function money(value) {
-  return new Intl.NumberFormat(lang === "sw" ? "sw-TZ" : "en-TZ", {
-    style:"currency", currency:"TZS", maximumFractionDigits:0
-  }).format(Number(value) || 0);
-}
-
-function safeText(value) {
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  })[c]);
-}
-
-function renderDashboard() {
-  const income = allTransactions.filter(x => x.type === "income")
-    .reduce((sum,x) => sum + Number(x.amount || 0),0);
-  const expenses = allTransactions.filter(x => x.type === "expense")
-    .reduce((sum,x) => sum + Number(x.amount || 0),0);
-
-  document.getElementById("totalIncome").textContent = money(income);
-  document.getElementById("totalExpenses").textContent = money(expenses);
-  document.getElementById("balance").textContent = money(income-expenses);
-  document.getElementById("recordCount").textContent = allTransactions.length;
-
-  const recent = allTransactions.slice(0,5);
-  document.getElementById("recentBody").innerHTML = recent.length ? recent.map(x => `
-    <tr>
-      <td>${safeText(x.date)}</td>
-      <td>${safeText(x.type === "income" ? t("income") : t("expense"))}</td>
-      <td>${safeText(x.description)}</td>
-      <td>${money(x.amount)}</td>
-    </tr>`).join("") : `<tr><td colspan="4">${t("noData")}</td></tr>`;
-}
-
-function renderTransactions() {
-  const body = document.getElementById("transactionsBody");
-  if (!body) return;
-  const search = (document.getElementById("searchTransactions")?.value || "").toLowerCase();
-  const rows = allTransactions.filter(x =>
-    String(x.description || "").toLowerCase().includes(search) ||
-    String(x.person || "").toLowerCase().includes(search)
-  );
-
-  body.innerHTML = rows.length ? rows.map(x => `
-    <tr>
-      <td>${safeText(x.date)}</td>
-      <td>${safeText(x.type === "income" ? t("income") : t("expense"))}</td>
-      <td>${safeText(x.description)}</td>
-      <td>${safeText(x.person || "-")}</td>
-      <td>${money(x.amount)}</td>
-      <td><button class="danger" onclick="deleteTransaction('${safeText(x.id)}')">${t("delete")}</button></td>
-    </tr>`).join("") : `<tr><td colspan="6">${t("noData")}</td></tr>`;
-}
-
-document.getElementById("searchTransactions").addEventListener("input", renderTransactions);
-
-/* Add transaction */
-document.getElementById("transactionForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  if (!currentUser) return;
-
-  const amount = Number(document.getElementById("txAmount").value);
-  if (!Number.isFinite(amount) || amount <= 0) {
-    showMessage("Weka kiasi sahihi.", "error");
-    return;
-  }
-
-  const data = {
-    farmId:FARM_ID,
-    uid:currentUser.uid,
-    date:document.getElementById("txDate").value,
-    type:document.getElementById("txType").value,
-    description:document.getElementById("txDescription").value.trim(),
-    person:document.getElementById("txPerson").value.trim(),
-    amount:amount,
-    createdAt:firebase.firestore.FieldValue.serverTimestamp()
-  };
-
-  try {
-    await db.collection("transactions").add(data);
-    e.target.reset();
-    document.getElementById("txDate").value = new Date().toISOString().slice(0,10);
-    showMessage(t("transactionSaved"), "success");
-    await loadTransactions();
-  } catch (err) {
-    showMessage(friendlyError(err), "error");
-  }
-});
-
-/* Delete transaction */
-async function deleteTransaction(id) {
-  if (!currentUser || !confirm(t("confirmDelete"))) return;
-  try {
-    const ref = db.collection("transactions").doc(id);
-    const doc = await ref.get();
-    if (!doc.exists) throw new Error("Muamala haujapatikana.");
-    if (doc.data().farmId !== FARM_ID) throw new Error("Muamala hauhusiani na shamba hili.");
-    await ref.delete();
-    showMessage(t("delete"), "success");
-    await loadTransactions();
-  } catch (err) {
-    showMessage(friendlyError(err), "error");
-  }
-}
-
-/* Tabs */
-function showTab(tab, button) {
-  ["dashboard","transactions","reports","account"].forEach(name => {
-    document.getElementById("tab-"+name).classList.toggle("hidden", name !== tab);
-  });
-  document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
-  button.classList.add("active");
-  if (tab === "reports") generateReport(false);
-}
-
-/* Edit display name */
-document.getElementById("nameForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  if (!currentUser) return;
-  const name = document.getElementById("editName").value.trim();
-  if (!name) return;
-
-  try {
-    await currentUser.updateProfile({displayName:name});
-    await db.collection("users").doc(currentUser.uid).set({
-      uid:currentUser.uid, name:name, email:currentUser.email, farmId:FARM_ID
-    }, {merge:true});
-    document.getElementById("userName").textContent = name;
-    showMessage(t("nameSaved"), "success");
-  } catch (err) {
-    showMessage(friendlyError(err), "error");
-  }
-});
-
-/* Change password */
-document.getElementById("passwordForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  if (!currentUser) return;
-
-  const oldPassword = document.getElementById("currentPassword").value;
-  const newPassword = document.getElementById("newPassword").value;
-  const confirm = document.getElementById("confirmNewPassword").value;
-
-  if (newPassword.length < 6) {
-    showMessage(t("newPassword") + ": tumia angalau herufi 6.", "error");
-    return;
-  }
-  if (newPassword !== confirm) {
-    showMessage(t("confirmPassword") + ": nenosiri halifanani.", "error");
-    return;
-  }
-
-  try {
-    const credential = firebase.auth.EmailAuthProvider.credential(currentUser.email, oldPassword);
-    await currentUser.reauthenticateWithCredential(credential);
-    await currentUser.updatePassword(newPassword);
-    e.target.reset();
-    showMessage(t("passwordChanged"), "success");
-  } catch (err) {
-    showMessage(friendlyError(err), "error");
-  }
-});
-
-/* Reports */
-function generateReport(showErrors = true) {
-  const from = document.getElementById("reportFrom").value;
-  const to = document.getElementById("reportTo").value;
-
-  if (from && to && from > to) {
-    if (showErrors) showMessage(t("invalidDates"), "error");
-    return;
-  }
-
-  reportTransactions = allTransactions.filter(x =>
-    (!from || String(x.date || "") >= from) &&
-    (!to || String(x.date || "") <= to)
-  );
-
-  const income = reportTransactions.filter(x => x.type === "income")
-    .reduce((sum,x) => sum + Number(x.amount || 0),0);
-  const expenses = reportTransactions.filter(x => x.type === "expense")
-    .reduce((sum,x) => sum + Number(x.amount || 0),0);
-
-  document.getElementById("reportIncome").textContent = money(income);
-  document.getElementById("reportExpenses").textContent = money(expenses);
-  document.getElementById("reportBalance").textContent = money(income-expenses);
-
-  document.getElementById("reportBody").innerHTML = reportTransactions.length
-    ? reportTransactions.map(x => `
-      <tr>
-        <td>${safeText(x.date)}</td>
-        <td>${safeText(x.type === "income" ? t("income") : t("expense"))}</td>
-        <td>${safeText(x.description)}</td>
-        <td>${safeText(x.person || "-")}</td>
-        <td>${money(x.amount)}</td>
-      </tr>`).join("")
-    : `<tr><td colspan="5">${t("noData")}</td></tr>`;
-}
-
-function exportPDF() {
-  generateReport();
-  if (!reportTransactions.length) {
-    showMessage(t("noReport"), "error");
-    return;
-  }
-  if (!window.jspdf || !window.jspdf.jsPDF) {
-    showMessage("PDF library haijapakia. Kagua mtandao kisha ujaribu tena.", "error");
-    return;
-  }
-
-  const {jsPDF} = window.jspdf;
-  const doc = new jsPDF();
-  doc.setFontSize(18);
-  doc.text(t("reportTitle"), 14, 18);
-  doc.setFontSize(10);
-  doc.text("I&E ShambaSmart | Ibrahim | Esromu", 14, 26);
-
-  const from = document.getElementById("reportFrom").value || "-";
-  const to = document.getElementById("reportTo").value || "-";
-  doc.text(`${t("reportPeriod")}: ${from} - ${to}`, 14, 33);
-
-  doc.autoTable({
-    startY:39,
-    head:[[t("date"),t("type"),t("description"),t("person"),t("amount")]],
-    body:reportTransactions.map(x => [
-      x.date || "",
-      x.type === "income" ? t("income") : t("expense"),
-      x.description || "",
-      x.person || "-",
-      Number(x.amount || 0).toLocaleString()
-    ])
-  });
-  doc.save("IE-ShambaSmart-Report.pdf");
-}
-
-function exportExcel() {
-  generateReport();
-  if (!reportTransactions.length) {
-    showMessage(t("noReport"), "error");
-    return;
-  }
-  if (!window.XLSX) {
-    showMessage("Excel library haijapakia. Kagua mtandao kisha ujaribu tena.", "error");
-    return;
-  }
-
-  const rows = reportTransactions.map(x => ({
-    [t("date")]:x.date || "",
-    [t("type")]:x.type === "income" ? t("income") : t("expense"),
-    [t("description")]:x.description || "",
-    [t("person")]:x.person || "",
-    [t("amount")]:Number(x.amount || 0)
-  }));
-  const ws = XLSX.utils.json_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "ShambaSmart");
-  XLSX.writeFile(wb, "IE-ShambaSmart-Report.xlsx");
-}
-
-/* Apply saved language on first load */
-setLang(lang);
-document.getElementById("logoutBtn").textContent = t("logout");
+setLanguage(appLanguage);
 </script>
 </body>
-</html>
+                                                        </html>
