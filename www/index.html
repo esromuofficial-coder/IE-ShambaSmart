@@ -9,234 +9,168 @@
   <style>
     :root {
       --green: #166534;
-      --green-light: #22c55e;
+      --light-green: #22c55e;
       --bg: #f3f6f3;
       --card: #ffffff;
       --text: #17251a;
       --muted: #647067;
       --border: #dce5dd;
       --red: #dc2626;
-      --blue: #2563eb;
-      --shadow: 0 4px 15px rgba(0, 0, 0, .06);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
+      font-family: Arial, sans-serif;
       background: var(--bg);
       color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
     }
 
-    body.dark {
-      --bg: #101810;
-      --card: #1c281d;
-      --text: #f1f5f1;
-      --muted: #a5b4a6;
-      --border: #354536;
-      --shadow: 0 4px 15px rgba(0, 0, 0, .2);
-    }
+    button, input, select, textarea { font: inherit; }
+    button { cursor: pointer; }
 
-    button, input, select, textarea {
-      font: inherit;
-    }
+    .hidden { display: none !important; }
 
-    button {
-      cursor: pointer;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .topbar {
+    header {
       background: var(--green);
       color: white;
       padding: 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      position: sticky;
-      top: 0;
-      z-index: 5;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
       gap: 10px;
-      min-width: 0;
     }
 
-    .logo {
-      width: 43px;
-      height: 43px;
-      object-fit: cover;
-      border-radius: 12px;
-      background: white;
-      color: var(--green);
-      display: grid;
-      place-items: center;
-      font-weight: bold;
-      flex-shrink: 0;
-    }
+    header h1 { font-size: 18px; margin: 0 0 5px; }
 
-    .brand h1 {
-      margin: 0;
-      font-size: 17px;
-    }
-
-    .brand small {
-      display: block;
-      margin-top: 4px;
-      opacity: .85;
-    }
-
-    .topbar button {
-      border: 1px solid rgba(255,255,255,.4);
+    header button {
       background: transparent;
+      border: 1px solid white;
       color: white;
-      padding: 9px 12px;
-      border-radius: 9px;
+      border-radius: 8px;
+      padding: 9px;
     }
 
-    .container {
-      max-width: 1050px;
+    main {
+      max-width: 900px;
       margin: auto;
-      padding: 18px;
+      padding: 16px;
       padding-bottom: 95px;
-    }
-
-    .page-title {
-      font-size: 23px;
-      margin: 4px 0 7px;
-    }
-
-    .muted {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 13px;
     }
 
     .card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 15px;
+      border-radius: 14px;
       padding: 16px;
-      box-shadow: var(--shadow);
       margin-bottom: 15px;
-      min-width: 0;
-    }
-
-    .stat-label {
-      color: var(--muted);
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-
-    .stat-value {
-      font-size: 21px;
-      font-weight: 700;
       overflow-wrap: anywhere;
     }
 
-    .green {
-      color: #22a052;
-    }
+    h2 { font-size: 20px; margin-top: 0; }
+    h3 { font-size: 17px; }
 
-    .red {
-      color: #ef4444;
-    }
+    .muted { color: var(--muted); font-size: 14px; }
 
-    .blue {
-      color: #60a5fa;
-    }
-
-    .section-title {
-      font-size: 18px;
-      margin: 6px 0 14px;
-    }
-
-    .field {
-      margin-bottom: 15px;
-    }
+    .field { margin-bottom: 14px; }
 
     label {
       display: block;
-      margin-bottom: 7px;
+      font-weight: bold;
       font-size: 14px;
-      font-weight: 600;
+      margin-bottom: 7px;
     }
 
     input, select, textarea {
       width: 100%;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      background: var(--card);
-      color: var(--text);
       padding: 12px;
-      outline: none;
-    }
-
-    input:focus, select:focus, textarea:focus {
-      border-color: var(--green-light);
-    }
-
-    textarea {
-      min-height: 80px;
-      resize: vertical;
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      background: white;
+      color: #17251a;
     }
 
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: none;
-      border-radius: 10px;
+      display: inline-block;
       padding: 12px 15px;
+      border: 0;
+      border-radius: 9px;
       background: var(--green);
       color: white;
-      font-weight: 600;
-      gap: 7px;
+      font-weight: bold;
     }
 
-    .btn:disabled {
-      opacity: .55;
-      cursor: wait;
-    }
+    .btn:disabled { opacity: .6; }
 
     .btn-secondary {
       background: #e5eee6;
       color: #164b28;
     }
 
-    .btn-danger {
-      background: #dc2626;
-      color: white;
+    .btn-danger { background: var(--red); }
+
+    .full { width: 100%; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
     }
 
-    .btn-block {
-      width: 100%;
+    .stat {
+      font-size: 20px;
+      font-weight: bold;
+      margin-top: 8px;
+      overflow-wrap: anywhere;
     }
 
-    .btn-row {
+    .green { color: #15803d; }
+    .red { color: #dc2626; }
+
+    .notice {
+      padding: 12px;
+      margin: 12px 0;
+      border-radius: 9px;
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .success { background: #dcfce7; color: #166534; }
+    .error { background: #fee2e2; color: #991b1b; }
+    .info { background: #dbeafe; color: #1e40af; }
+
+    .tabs {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
       display: flex;
-      flex-wrap: wrap;
-      gap: 9px;
+      justify-content: space-around;
+      gap: 2px;
+      padding: 8px 2px;
+      padding-bottom: calc(8px + env(safe-area-inset-bottom));
+      background: white;
+      border-top: 1px solid var(--border);
+      z-index: 5;
     }
 
-    .table-wrap {
-      overflow-x: auto;
+    .tabs button {
+      flex: 1;
+      padding: 9px 2px;
+      border: 0;
+      background: transparent;
+      color: #475569;
+      font-size: 12px;
     }
+
+    .tabs button.active {
+      color: var(--green);
+      font-weight: bold;
+    }
+
+    .table-wrap { overflow-x: auto; }
 
     table {
       width: 100%;
@@ -245,186 +179,53 @@
     }
 
     th, td {
-      padding: 12px 9px;
+      padding: 10px 8px;
       border-bottom: 1px solid var(--border);
       text-align: left;
       white-space: nowrap;
     }
 
-    th {
-      color: var(--muted);
-      font-weight: 600;
+    .auth {
+      max-width: 430px;
+      margin: 35px auto;
+      padding: 16px;
     }
 
-    .badge {
-      display: inline-block;
-      padding: 5px 8px;
-      border-radius: 7px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .badge-income {
-      color: #15803d;
-      background: #dcfce7;
-    }
-
-    .badge-expense {
-      color: #b91c1c;
-      background: #fee2e2;
-    }
-
-    .notice {
-      border-radius: 10px;
-      padding: 12px;
-      margin: 12px 0;
-      font-size: 14px;
-      line-height: 1.5;
-      overflow-wrap: anywhere;
-    }
-
-    .notice-error {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    .notice-success {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .notice-info {
-      background: #dbeafe;
-      color: #1e40af;
+    .link {
+      border: 0;
+      background: none;
+      color: var(--green);
+      padding: 12px 0;
     }
 
     .empty {
+      padding: 20px 5px;
       text-align: center;
-      padding: 25px 10px;
       color: var(--muted);
     }
 
-    .bottom-nav {
-      position: fixed;
-      z-index: 10;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: var(--card);
-      border-top: 1px solid var(--border);
-      display: flex;
-      justify-content: space-around;
-      padding: 8px 3px calc(8px + env(safe-area-inset-bottom));
-    }
-
-    .nav-btn {
-      background: transparent;
-      border: none;
-      color: var(--muted);
-      padding: 7px 5px;
-      font-size: 11px;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      align-items: center;
-    }
-
-    .nav-btn span {
-      font-size: 20px;
-    }
-
-    .nav-btn.active {
-      color: var(--green-light);
-      font-weight: bold;
-    }
-
-    .auth-wrap {
-      min-height: 100vh;
-      display: grid;
-      place-items: center;
-      padding: 20px;
-    }
-
-    .auth-card {
-      width: 100%;
-      max-width: 430px;
-    }
-
-    .auth-heading {
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .auth-heading .big-logo {
-      width: 70px;
-      height: 70px;
-      border-radius: 20px;
-      display: grid;
-      place-items: center;
-      margin: 0 auto 15px;
-      background: var(--green);
-      color: white;
-      font-size: 28px;
-      font-weight: bold;
-    }
-
-    .link-btn {
-      background: none;
-      border: none;
-      color: var(--green-light);
-      padding: 12px 0 0;
-    }
-
-    .loading {
-      text-align: center;
-      padding: 30px;
-      color: var(--muted);
-    }
-
-    .small {
-      font-size: 12px;
-    }
-
-    .photo-preview {
-      width: 90px;
-      height: 90px;
-      object-fit: cover;
-      border-radius: 14px;
-      background: var(--border);
-    }
-
-    @media (min-width: 700px) {
-      .grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-      }
-
-      .container {
-        padding-top: 25px;
-      }
+    @media (min-width: 650px) {
+      .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
     }
   </style>
 </head>
 
 <body>
 
-  <div id="loadingScreen" class="loading">
-    Inafungua I & E ShambaSmart...
-  </div>
+  <section id="loadingScreen" class="auth">
+    <div class="card">Inafungua I & E ShambaSmart...</div>
+  </section>
 
-  <!-- LOGIN / REGISTER -->
-  <section id="authScreen" class="auth-wrap hidden">
-    <div class="card auth-card">
+  <!-- LOGIN NA USAJILI -->
+  <section id="authScreen" class="auth hidden">
+    <div class="card">
+      <h1>I & E ShambaSmart</h1>
+      <p class="muted">Simamia mapato, matumizi na shughuli za shamba.</p>
 
-      <div class="auth-heading">
-        <div class="big-logo">IE</div>
-        <h1>I & E ShambaSmart</h1>
-        <p class="muted">Simamia mapato, matumizi na shughuli za shamba.</p>
-      </div>
+      <div id="loginPanel">
+        <h2>Ingia kwenye akaunti</h2>
 
-      <div id="loginForm">
-        <h2 class="section-title">Ingia kwenye akaunti</h2>
-
-        <form id="loginFormElement">
+        <form id="loginForm">
           <div class="field">
             <label for="loginEmail">Barua pepe</label>
             <input id="loginEmail" type="email" required autocomplete="email">
@@ -435,18 +236,18 @@
             <input id="loginPassword" type="password" required autocomplete="current-password">
           </div>
 
-          <button class="btn btn-block" type="submit">Ingia</button>
+          <button class="btn full" type="submit">Ingia</button>
         </form>
 
-        <button id="showRegister" class="link-btn">
+        <button id="showRegister" class="link" type="button">
           Sina akaunti? Jisajili
         </button>
       </div>
 
-      <div id="registerForm" class="hidden">
-        <h2 class="section-title">Fungua akaunti</h2>
+      <div id="registerPanel" class="hidden">
+        <h2>Fungua akaunti</h2>
 
-        <form id="registerFormElement">
+        <form id="registerForm">
           <div class="field">
             <label for="registerName">Jina kamili</label>
             <input id="registerName" required maxlength="100" autocomplete="name">
@@ -462,30 +263,164 @@
             <input id="registerPassword" type="password" minlength="6" required autocomplete="new-password">
           </div>
 
-          <button class="btn btn-block" type="submit">Jisajili</button>
+          <button class="btn full" type="submit">Jisajili</button>
         </form>
 
-        <button id="showLogin" class="link-btn">
+        <button id="showLogin" class="link" type="button">
           Tayari nina akaunti? Ingia
         </button>
       </div>
 
-      <div id="authMessage" role="status" aria-live="polite"></div>
+      <div id="authMessage" aria-live="polite"></div>
     </div>
   </section>
 
-  <!-- MAIN APP -->
-  <div id="appScreen" class="hidden">
-
-    <header class="topbar">
-      <div class="brand">
-        <img id="headerLogo" class="logo hidden" alt="Logo ya shamba">
-        <div id="headerLogoText" class="logo">IE</div>
-
-        <div>
-          <h1>I & E ShambaSmart</h1>
-          <small id="headerUser">Karibu</small>
-        </div>
+  <!-- APP KUU -->
+  <section id="appScreen" class="hidden">
+    <header>
+      <div>
+        <h1>I & E ShambaSmart</h1>
+        <small id="welcomeText">Karibu</small>
       </div>
+      <button id="logoutButton" type="button">Toka</button>
+    </header>
 
-      <button id="logout
+    <main>
+      <div id="appMessage" aria-live="polite"></div>
+
+      <!-- DASHBOARD -->
+      <section id="page-home">
+        <div class="card">
+          <h2>Dashboard</h2>
+          <p class="muted">Muhtasari wa fedha zako.</p>
+          <button id="refreshButton" class="btn btn-secondary" type="button">
+            Sasisha taarifa
+          </button>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="muted">Jumla ya mapato</div>
+            <div id="homeIncome" class="stat green">TZS 0</div>
+          </div>
+
+          <div class="card">
+            <div class="muted">Jumla ya matumizi</div>
+            <div id="homeExpense" class="stat red">TZS 0</div>
+          </div>
+
+          <div class="card">
+            <div class="muted">Salio</div>
+            <div id="homeBalance" class="stat">TZS 0</div>
+          </div>
+
+          <div class="card">
+            <div class="muted">Idadi ya miamala</div>
+            <div id="homeCount" class="stat">0</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Miamala ya karibuni</h3>
+          <div id="recentTransactions" class="empty">Hakuna miamala bado.</div>
+        </div>
+      </section>
+
+      <!-- ONGEZA MUAMALA -->
+      <section id="page-add" class="hidden">
+        <div class="card">
+          <h2>Ongeza muamala</h2>
+          <p class="muted">
+            Jaza taarifa hizi ili muamala uhifadhiwe kwenye Firebase.
+          </p>
+
+          <form id="transactionForm">
+            <div class="field">
+              <label for="transactionType">Aina ya muamala</label>
+              <select id="transactionType" required>
+                <option value="income">Mapato</option>
+                <option value="expense">Matumizi</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="transactionDate">Tarehe</label>
+              <input id="transactionDate" type="date" required>
+            </div>
+
+            <div class="field">
+              <label for="transactionDescription">Maelezo ya muamala</label>
+              <input id="transactionDescription" required maxlength="200"
+                     placeholder="Mfano: Mauzo ya mahindi">
+            </div>
+
+            <div class="field">
+              <label for="transactionPerson">Mhusika au aliyelipwa (si lazima)</label>
+              <input id="transactionPerson" maxlength="100"
+                     placeholder="Mfano: Juma">
+            </div>
+
+            <div class="field">
+              <label for="transactionAmount">Kiasi (TZS)</label>
+              <input id="transactionAmount" type="number" min="1" step="1" required
+                     placeholder="Mfano: 50000">
+            </div>
+
+            <button id="saveTransactionButton" class="btn full" type="submit">
+              Hifadhi muamala
+            </button>
+          </form>
+        </div>
+      </section>
+
+      <!-- MIAMALA YOTE -->
+      <section id="page-transactions" class="hidden">
+        <div class="card">
+          <h2>Miamala yote</h2>
+          <p class="muted">Miamala ya akaunti yako pekee.</p>
+
+          <div class="field">
+            <label for="transactionSearch">Tafuta muamala</label>
+            <input id="transactionSearch" placeholder="Andika maelezo ya muamala">
+          </div>
+
+          <div id="allTransactions">
+            <div class="empty">Inapakia miamala...</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIPOTI -->
+      <section id="page-reports" class="hidden">
+        <div class="card">
+          <h2>Ripoti za mapato na matumizi</h2>
+
+          <div class="field">
+            <label for="reportStart">Kuanzia tarehe</label>
+            <input id="reportStart" type="date">
+          </div>
+
+          <div class="field">
+            <label for="reportEnd">Mpaka tarehe</label>
+            <input id="reportEnd" type="date">
+          </div>
+
+          <button id="generateReportButton" class="btn full" type="button">
+            Tengeneza ripoti
+          </button>
+        </div>
+
+        <div class="grid">
+          <div class="card">
+            <div class="muted">Mapato</div>
+            <div id="reportIncome" class="stat green">TZS 0</div>
+          </div>
+
+          <div class="card">
+            <div class="muted">Matumizi</div>
+            <div id="reportExpense" class="stat red">TZS 0</div>
+          </div>
+
+          <div class="card">
+            <div class="muted">Faida au hasara</div>
+            <div id="reportBalance"
