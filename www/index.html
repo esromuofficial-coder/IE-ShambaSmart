@@ -3,66 +3,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#176b45">
+  <meta name="theme-color" content="#166534">
   <title>I & E ShambaSmart</title>
 
   <style>
     :root {
-      --green: #176b45;
-      --green-dark: #104b32;
-      --gold: #f4b942;
-      --bg: #f3f7f4;
+      --green: #166534;
+      --green-light: #22c55e;
+      --bg: #f3f6f3;
       --card: #ffffff;
-      --text: #1b2b22;
-      --muted: #718078;
-      --border: #e0e9e2;
-      --red: #d94c4c;
-      --shadow: 0 8px 25px rgba(18, 75, 47, .08);
+      --text: #17251a;
+      --muted: #647067;
+      --border: #dce5dd;
+      --red: #dc2626;
+      --blue: #2563eb;
+      --shadow: 0 4px 15px rgba(0, 0, 0, .06);
     }
 
-    body.dark {
-      --bg: #101a15;
-      --card: #1a2820;
-      --text: #eff7f0;
-      --muted: #a6b5aa;
-      --border: #304137;
-      --shadow: 0 8px 25px rgba(0, 0, 0, .2);
+    * {
+      box-sizing: border-box;
     }
-
-    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       background: var(--bg);
       color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
-      transition: background .2s, color .2s;
     }
 
-    button, input, select, textarea { font: inherit; }
-    button { cursor: pointer; }
+    body.dark {
+      --bg: #101810;
+      --card: #1c281d;
+      --text: #f1f5f1;
+      --muted: #a5b4a6;
+      --border: #354536;
+      --shadow: 0 4px 15px rgba(0, 0, 0, .2);
+    }
 
-    .hidden { display: none !important; }
+    button, input, select, textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
 
     .topbar {
-      height: 68px;
-      position: sticky;
-      top: 0;
-      z-index: 20;
+      background: var(--green);
+      color: white;
+      padding: 16px;
       display: flex;
       align-items: center;
-      gap: 13px;
-      padding: 0 20px;
-      background: var(--card);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .menu-btn {
-      border: 0;
-      background: transparent;
-      color: var(--text);
-      font-size: 28px;
-      padding: 5px 8px;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 5;
     }
 
     .brand {
@@ -70,1534 +70,422 @@
       align-items: center;
       gap: 10px;
       min-width: 0;
-      flex: 1;
     }
 
-    .brand-logo {
-      width: 42px;
-      height: 42px;
-      flex-shrink: 0;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      background: var(--green);
-      color: white;
-      font-weight: bold;
-      font-size: 15px;
-      overflow: hidden;
-    }
-
-    .brand-logo img, .profile-image img {
-      width: 100%;
-      height: 100%;
+    .logo {
+      width: 43px;
+      height: 43px;
       object-fit: cover;
-    }
-
-    .brand-name { font-weight: 800; font-size: 16px; }
-    .brand-sub { color: var(--muted); font-size: 11px; margin-top: 3px; }
-
-    .header-action {
-      border: 1px solid var(--border);
-      background: var(--card);
-      color: var(--text);
-      border-radius: 10px;
-      padding: 9px 12px;
-    }
-
-    .app-shell {
-      max-width: 1250px;
-      margin: auto;
-      padding: 24px;
-    }
-
-    .welcome-banner {
-      background: linear-gradient(125deg, var(--green-dark), var(--green));
-      color: white;
-      border-radius: 22px;
-      padding: 28px;
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 24px;
-    }
-
-    .welcome-banner::after {
-      content: "🌱";
-      position: absolute;
-      right: 25px;
-      bottom: -14px;
-      font-size: 100px;
-      opacity: .15;
-    }
-
-    .welcome-banner h1 { margin: 0 0 9px; font-size: 27px; }
-    .welcome-banner p { margin: 0; opacity: .9; line-height: 1.6; }
-
-    .section-heading {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      margin: 25px 0 15px;
-    }
-
-    .section-heading h2 { margin: 0; font-size: 19px; }
-
-    .muted { color: var(--muted); }
-    .small { font-size: 12px; }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 16px;
-    }
-
-    .stat-card, .panel, .action-card, .setting-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 17px;
-      padding: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    .stat-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-    }
-
-    .stat-icon {
-      width: 42px;
-      height: 42px;
+      border-radius: 12px;
+      background: white;
+      color: var(--green);
       display: grid;
       place-items: center;
-      border-radius: 13px;
-      background: #e7f5ec;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .brand small {
+      display: block;
+      margin-top: 4px;
+      opacity: .85;
+    }
+
+    .topbar button {
+      border: 1px solid rgba(255,255,255,.4);
+      background: transparent;
+      color: white;
+      padding: 9px 12px;
+      border-radius: 9px;
+    }
+
+    .container {
+      max-width: 1050px;
+      margin: auto;
+      padding: 18px;
+      padding-bottom: 95px;
+    }
+
+    .page-title {
+      font-size: 23px;
+      margin: 4px 0 7px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 15px;
+      min-width: 0;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
       font-size: 21px;
-    }
-
-    .stat-label { color: var(--muted); font-size: 13px; }
-    .stat-value { font-size: clamp(18px, 2.6vw, 27px); font-weight: 800; margin-top: 15px; overflow-wrap: anywhere; }
-    .income { color: #26945a; }
-    .expense { color: var(--red); }
-
-    .content-grid {
-      display: grid;
-      grid-template-columns: 1.15fr .85fr;
-      gap: 18px;
-      margin-top: 20px;
-    }
-
-    .panel h2, .panel h3 { margin-top: 0; }
-
-    .chart-row { margin: 20px 0; }
-    .chart-label { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; margin-bottom: 8px; }
-    .chart-track { height: 12px; background: var(--border); border-radius: 20px; overflow: hidden; }
-    .chart-fill { height: 100%; width: 0; border-radius: 20px; transition: width .4s; }
-    .chart-income { background: #29985e; }
-    .chart-expense { background: var(--red); }
-
-    .quick-actions {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 18px;
-    }
-
-    .action-card {
-      text-align: left;
-      color: var(--text);
-      cursor: pointer;
-      transition: transform .15s;
-    }
-
-    .action-card:hover { transform: translateY(-2px); }
-    .action-icon { font-size: 25px; display: block; margin-bottom: 12px; }
-    .action-card strong { display: block; margin-bottom: 6px; }
-    .action-card span:last-child { font-size: 12px; color: var(--muted); line-height: 1.5; }
-
-    .primary, .secondary, .danger {
-      border: 0;
-      border-radius: 11px;
-      padding: 12px 16px;
       font-weight: 700;
+      overflow-wrap: anywhere;
     }
 
-    .primary { background: var(--green); color: white; }
-    .primary:hover { background: var(--green-dark); }
-    .secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
-    .danger { background: #ffeded; color: #a72f2f; }
-    button:disabled { opacity: .6; cursor: wait; }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 15px;
+    .green {
+      color: #22a052;
     }
 
-    .field { margin-bottom: 15px; }
-    .field label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 7px; }
+    .red {
+      color: #ef4444;
+    }
 
-    .field input, .field select, .field textarea {
+    .blue {
+      color: #60a5fa;
+    }
+
+    .section-title {
+      font-size: 18px;
+      margin: 6px 0 14px;
+    }
+
+    .field {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input, select, textarea {
       width: 100%;
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 12px;
-      color: var(--text);
       background: var(--card);
+      color: var(--text);
+      padding: 12px;
       outline: none;
     }
 
-    .field input:focus, .field select:focus, .field textarea:focus {
-      border-color: var(--green);
-      box-shadow: 0 0 0 3px rgba(23, 107, 69, .1);
+    input:focus, select:focus, textarea:focus {
+      border-color: var(--green-light);
     }
 
-    .form-message {
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-      font-size: 13px;
-      line-height: 1.5;
-      background: var(--bg);
+    textarea {
+      min-height: 80px;
+      resize: vertical;
     }
 
-    .form-message.error { background: #fff0f0; color: #a72f2f; }
-    .form-message.success { background: #e9f8ef; color: #176b45; }
-
-    .table-wrap { overflow-x: auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 560px; }
-    th, td { padding: 13px 10px; border-bottom: 1px solid var(--border); text-align: left; font-size: 13px; }
-    th { color: var(--muted); font-weight: 700; }
-    .type-pill { display: inline-block; padding: 5px 8px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-    .pill-in { color: #176b45; background: #e5f7eb; }
-    .pill-out { color: #ae3838; background: #ffebeb; }
-
-    .empty-state { padding: 25px 12px; text-align: center; color: var(--muted); }
-
-    .page-title { margin: 0 0 8px; font-size: 25px; }
-    .page-description { color: var(--muted); margin: 0 0 22px; line-height: 1.6; }
-
-    .auth-wrap { max-width: 470px; margin: 25px auto; }
-    .auth-card { padding: 25px; }
-    .auth-tabs { display: flex; gap: 8px; margin-bottom: 20px; }
-    .auth-tab { flex: 1; }
-    .auth-tab.active { background: var(--green); color: white; border-color: var(--green); }
-
-    .image-preview {
-      height: 150px;
-      width: 100%;
-      border: 2px dashed var(--border);
-      border-radius: 15px;
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-      background: var(--bg);
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
-
-    .image-preview img { width: 100%; height: 100%; object-fit: contain; }
-    .profile-image {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      background: var(--bg);
-      display: grid;
-      place-items: center;
-      overflow: hidden;
-      font-size: 35px;
-      margin-bottom: 15px;
-    }
-
-    .setting-row {
-      display: flex;
-      justify-content: space-between;
+    .btn {
+      display: inline-flex;
       align-items: center;
-      gap: 20px;
-      padding: 17px 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .setting-row:last-child { border-bottom: 0; }
-
-    .switch { width: 48px; height: 26px; position: relative; flex-shrink: 0; }
-    .switch input { opacity: 0; width: 0; height: 0; }
-    .slider { position: absolute; inset: 0; background: #aab6ae; border-radius: 20px; cursor: pointer; }
-    .slider::before { content: ""; position: absolute; width: 20px; height: 20px; left: 3px; top: 3px; background: white; border-radius: 50%; transition: .2s; }
-    .switch input:checked + .slider { background: var(--green); }
-    .switch input:checked + .slider::before { transform: translateX(22px); }
-
-    .drawer-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,.45);
-      z-index: 40;
-    }
-
-    .drawer {
-      position: fixed;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      width: min(310px, 85vw);
-      background: var(--card);
-      z-index: 41;
-      padding: 20px 15px;
-      overflow-y: auto;
-      transform: translateX(-105%);
-      transition: transform .25s;
-      box-shadow: 10px 0 35px rgba(0,0,0,.15);
-    }
-
-    .drawer.open { transform: translateX(0); }
-    .drawer-head { display: flex; align-items: center; gap: 12px; padding: 8px 7px 22px; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
-    .drawer-nav { display: grid; gap: 5px; }
-    .drawer-nav button {
-      width: 100%;
-      text-align: left;
-      border: 0;
+      justify-content: center;
+      border: none;
       border-radius: 10px;
-      padding: 13px;
-      color: var(--text);
-      background: transparent;
+      padding: 12px 15px;
+      background: var(--green);
+      color: white;
+      font-weight: 600;
+      gap: 7px;
     }
-    .drawer-nav button:hover, .drawer-nav button.active { background: #e7f5ec; color: #176b45; }
-    .drawer-nav .logout-link { color: var(--red); }
+
+    .btn:disabled {
+      opacity: .55;
+      cursor: wait;
+    }
+
+    .btn-secondary {
+      background: #e5eee6;
+      color: #164b28;
+    }
+
+    .btn-danger {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 12px 9px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    th {
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-income {
+      color: #15803d;
+      background: #dcfce7;
+    }
+
+    .badge-expense {
+      color: #b91c1c;
+      background: #fee2e2;
+    }
+
+    .notice {
+      border-radius: 10px;
+      padding: 12px;
+      margin: 12px 0;
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .notice-error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .notice-success {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .notice-info {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 25px 10px;
+      color: var(--muted);
+    }
 
     .bottom-nav {
-      display: none;
       position: fixed;
-      z-index: 25;
+      z-index: 10;
       bottom: 0;
       left: 0;
       right: 0;
       background: var(--card);
       border-top: 1px solid var(--border);
-      padding: 7px 4px calc(7px + env(safe-area-inset-bottom));
-      grid-template-columns: repeat(4, 1fr);
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 3px calc(8px + env(safe-area-inset-bottom));
     }
 
-    .bottom-nav button {
-      border: 0;
+    .nav-btn {
       background: transparent;
+      border: none;
       color: var(--muted);
+      padding: 7px 5px;
       font-size: 11px;
-      padding: 6px 2px;
-      display: grid;
-      justify-items: center;
+      display: flex;
+      flex-direction: column;
       gap: 4px;
+      align-items: center;
     }
 
-    .bottom-nav button span { font-size: 21px; }
-    .bottom-nav button.active { color: var(--green); font-weight: bold; }
-
-    .site-footer { text-align: center; padding: 30px 15px; color: var(--muted); font-size: 12px; }
-
-    @media (max-width: 800px) {
-      .app-shell { padding: 17px 14px 105px; }
-      .stats-grid { grid-template-columns: 1fr; gap: 11px; }
-      .stat-card { padding: 15px; }
-      .stat-value { margin-top: 8px; }
-      .content-grid { grid-template-columns: 1fr; }
-      .bottom-nav { display: grid; }
-      .header-action { padding: 8px 10px; font-size: 12px; }
-      .welcome-banner { padding: 22px; }
-      .welcome-banner h1 { font-size: 23px; }
-      .form-grid { grid-template-columns: 1fr; gap: 0; }
-      .section-heading { align-items: flex-start; }
+    .nav-btn span {
+      font-size: 20px;
     }
 
-    @media (min-width: 801px) {
-      .app-shell { padding-bottom: 45px; }
+    .nav-btn.active {
+      color: var(--green-light);
+      font-weight: bold;
+    }
+
+    .auth-wrap {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 430px;
+    }
+
+    .auth-heading {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .auth-heading .big-logo {
+      width: 70px;
+      height: 70px;
+      border-radius: 20px;
+      display: grid;
+      place-items: center;
+      margin: 0 auto 15px;
+      background: var(--green);
+      color: white;
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .link-btn {
+      background: none;
+      border: none;
+      color: var(--green-light);
+      padding: 12px 0 0;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 30px;
+      color: var(--muted);
+    }
+
+    .small {
+      font-size: 12px;
+    }
+
+    .photo-preview {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 14px;
+      background: var(--border);
+    }
+
+    @media (min-width: 700px) {
+      .grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .container {
+        padding-top: 25px;
+      }
     }
   </style>
 </head>
 
 <body>
-  <header class="topbar">
-    <button class="menu-btn" id="menuButton" aria-label="Fungua menyu">☰</button>
 
-    <div class="brand">
-      <div class="brand-logo" id="headerLogo">IE</div>
-      <div>
-        <div class="brand-name">I & E ShambaSmart</div>
-        <div class="brand-sub">Usimamizi wa shamba na fedha</div>
+  <div id="loadingScreen" class="loading">
+    Inafungua I & E ShambaSmart...
+  </div>
+
+  <!-- LOGIN / REGISTER -->
+  <section id="authScreen" class="auth-wrap hidden">
+    <div class="card auth-card">
+
+      <div class="auth-heading">
+        <div class="big-logo">IE</div>
+        <h1>I & E ShambaSmart</h1>
+        <p class="muted">Simamia mapato, matumizi na shughuli za shamba.</p>
       </div>
+
+      <div id="loginForm">
+        <h2 class="section-title">Ingia kwenye akaunti</h2>
+
+        <form id="loginFormElement">
+          <div class="field">
+            <label for="loginEmail">Barua pepe</label>
+            <input id="loginEmail" type="email" required autocomplete="email">
+          </div>
+
+          <div class="field">
+            <label for="loginPassword">Nenosiri</label>
+            <input id="loginPassword" type="password" required autocomplete="current-password">
+          </div>
+
+          <button class="btn btn-block" type="submit">Ingia</button>
+        </form>
+
+        <button id="showRegister" class="link-btn">
+          Sina akaunti? Jisajili
+        </button>
+      </div>
+
+      <div id="registerForm" class="hidden">
+        <h2 class="section-title">Fungua akaunti</h2>
+
+        <form id="registerFormElement">
+          <div class="field">
+            <label for="registerName">Jina kamili</label>
+            <input id="registerName" required maxlength="100" autocomplete="name">
+          </div>
+
+          <div class="field">
+            <label for="registerEmail">Barua pepe</label>
+            <input id="registerEmail" type="email" required autocomplete="email">
+          </div>
+
+          <div class="field">
+            <label for="registerPassword">Nenosiri (angalau herufi 6)</label>
+            <input id="registerPassword" type="password" minlength="6" required autocomplete="new-password">
+          </div>
+
+          <button class="btn btn-block" type="submit">Jisajili</button>
+        </form>
+
+        <button id="showLogin" class="link-btn">
+          Tayari nina akaunti? Ingia
+        </button>
+      </div>
+
+      <div id="authMessage" role="status" aria-live="polite"></div>
     </div>
+  </section>
 
-    <button class="header-action" id="headerAuthButton">Ingia</button>
-  </header>
+  <!-- MAIN APP -->
+  <div id="appScreen" class="hidden">
 
-  <div class="drawer-overlay hidden" id="drawerOverlay"></div>
+    <header class="topbar">
+      <div class="brand">
+        <img id="headerLogo" class="logo hidden" alt="Logo ya shamba">
+        <div id="headerLogoText" class="logo">IE</div>
 
-  <aside class="drawer" id="sideDrawer" aria-label="Menyu kuu">
-    <div class="drawer-head">
-      <div class="brand-logo" id="drawerLogo">IE</div>
-      <div>
-        <strong>I & E ShambaSmart</strong>
-        <div class="muted small" id="drawerUser">Karibu</div>
-      </div>
-      <button class="menu-btn" id="closeDrawer" style="margin-left:auto">×</button>
-    </div>
-
-    <nav class="drawer-nav">
-      <button data-nav="dashboard">🏠 &nbsp; Dashboard</button>
-      <button data-nav="in">💰 &nbsp; Mapato</button>
-      <button data-nav="out">💸 &nbsp; Matumizi</button>
-      <button data-nav="report">📊 &nbsp; Ripoti</button>
-      <button data-nav="crops">🌱 &nbsp; Mazao</button>
-      <button data-nav="livestock">🐄 &nbsp; Mifugo</button>
-      <button data-nav="profile">👤 &nbsp; Wasifu wangu</button>
-      <button data-nav="settings">⚙️ &nbsp; Settings</button>
-      <button class="logout-link" id="drawerLogout">↪ &nbsp; Toka kwenye akaunti</button>
-    </nav>
-  </aside>
-
-  <main class="app-shell">
-
-    <!-- DASHBOARD -->
-    <section id="dashboardPage">
-      <div class="welcome-banner">
-        <h1 id="welcomeTitle">Karibu I & E ShambaSmart 🌱</h1>
-        <p id="welcomeDescription">Simamia mapato, matumizi na shughuli za shamba lako sehemu moja.</p>
-      </div>
-
-      <div id="globalMessage" class="form-message hidden" role="status"></div>
-
-      <div class="section-heading">
         <div>
-          <h2>Muhtasari wa fedha</h2>
-          <div class="muted small">Jumla ya miamala iliyorekodiwa</div>
-        </div>
-        <button class="secondary" id="refreshButton">↻ Sasisha</button>
-      </div>
-
-      <div class="stats-grid">
-        <article class="stat-card">
-          <div class="stat-top">
-            <span class="stat-label">Jumla ya mapato</span>
-            <span class="stat-icon">💰</span>
-          </div>
-          <div class="stat-value income" id="totalIn">TZS 0</div>
-        </article>
-
-        <article class="stat-card">
-          <div class="stat-top">
-            <span class="stat-label">Jumla ya matumizi</span>
-            <span class="stat-icon">🧾</span>
-          </div>
-          <div class="stat-value expense" id="totalOut">TZS 0</div>
-        </article>
-
-        <article class="stat-card">
-          <div class="stat-top">
-            <span class="stat-label">Salio</span>
-            <span class="stat-icon">🏦</span>
-          </div>
-          <div class="stat-value" id="balance">TZS 0</div>
-        </article>
-      </div>
-
-      <div class="content-grid">
-        <section class="panel">
-          <h2>Muonekano wa fedha</h2>
-          <p class="muted small">Ulinganisho wa mapato na matumizi yako.</p>
-
-          <div class="chart-row">
-            <div class="chart-label">
-              <span>Mapato</span>
-              <strong class="income" id="chartIncomeText">TZS 0</strong>
-            </div>
-            <div class="chart-track"><div class="chart-fill chart-income" id="chartIncome"></div></div>
-          </div>
-
-          <div class="chart-row">
-            <div class="chart-label">
-              <span>Matumizi</span>
-              <strong class="expense" id="chartExpenseText">TZS 0</strong>
-            </div>
-            <div class="chart-track"><div class="chart-fill chart-expense" id="chartExpense"></div></div>
-          </div>
-
-          <p class="muted small">Chati hii hutegemea miamala iliyohifadhiwa kwenye akaunti yako.</p>
-        </section>
-
-        <section class="panel">
-          <h2>Vitendo vya haraka</h2>
-          <p class="muted small">Chagua kazi unayotaka kufanya.</p>
-
-          <div class="quick-actions">
-            <button class="action-card" data-nav="in">
-              <span class="action-icon">➕💰</span>
-              <strong>Ongeza mapato</strong>
-              <span>Rekodi fedha zilizoingia.</span>
-            </button>
-
-            <button class="action-card" data-nav="out">
-              <span class="action-icon">➖💸</span>
-              <strong>Ongeza matumizi</strong>
-              <span>Rekodi fedha zilizotumika.</span>
-            </button>
-
-            <button class="action-card" data-nav="report">
-              <span class="action-icon">📈</span>
-              <strong>Ripoti</strong>
-              <span>Angalia muhtasari wa fedha.</span>
-            </button>
-
-            <button class="action-card" data-nav="crops">
-              <span class="action-icon">🌾</span>
-              <strong>Shughuli za shamba</strong>
-              <span>Fungua sehemu ya mazao.</span>
-            </button>
-          </div>
-        </section>
-      </div>
-
-      <section class="panel" style="margin-top:20px">
-        <div class="section-heading" style="margin-top:0">
-          <div>
-            <h2>Miamala ya hivi karibuni</h2>
-            <div class="muted small">Mapato na matumizi yaliyorekodiwa</div>
-          </div>
-          <button class="secondary" id="viewAllTransactions">Ona yote</button>
-        </div>
-
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Tarehe</th>
-                <th>Aina</th>
-                <th>Maelezo</th>
-                <th>Mhusika</th>
-                <th>Kiasi</th>
-              </tr>
-            </thead>
-            <tbody id="transactionRows">
-              <tr><td colspan="5" class="empty-state">Ingia kwenye akaunti kuona miamala yako.</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </section>
-
-    <!-- LOGIN AND REGISTER -->
-    <section id="authPage" class="hidden">
-      <div class="auth-wrap">
-        <div class="panel auth-card">
-          <h1 class="page-title">Akaunti yako</h1>
-          <p class="page-description">Ingia au tengeneza akaunti ya I & E ShambaSmart.</p>
-
-          <div class="auth-tabs">
-            <button class="secondary auth-tab active" id="showLogin">Ingia</button>
-            <button class="secondary auth-tab" id="showRegister">Jisajili</button>
-          </div>
-
-          <div id="authMessage" class="form-message hidden" role="alert"></div>
-
-          <form id="loginForm">
-            <div class="field">
-              <label for="loginEmail">Barua pepe</label>
-              <input type="email" id="loginEmail" autocomplete="email" required>
-            </div>
-            <div class="field">
-              <label for="loginPassword">Nenosiri</label>
-              <input type="password" id="loginPassword" autocomplete="current-password" minlength="6" required>
-            </div>
-            <button class="primary" type="submit" id="loginButton" style="width:100%">Ingia kwenye akaunti</button>
-          </form>
-
-          <form id="registerForm" class="hidden">
-            <div class="field">
-              <label for="registerName">Jina lako</label>
-              <input type="text" id="registerName" autocomplete="name" required>
-            </div>
-            <div class="field">
-              <label for="registerEmail">Barua pepe</label>
-              <input type="email" id="registerEmail" autocomplete="email" required>
-            </div>
-            <div class="field">
-              <label for="registerPassword">Nenosiri (angalau herufi 6)</label>
-              <input type="password" id="registerPassword" autocomplete="new-password" minlength="6" required>
-            </div>
-            <button class="primary" type="submit" id="registerButton" style="width:100%">Tengeneza akaunti</button>
-          </form>
-
-          <button class="secondary" id="backDashboard" style="width:100%;margin-top:12px">Rudi mwanzo</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- TRANSACTION PAGE -->
-    <section id="transactionPage" class="hidden">
-      <h1 class="page-title" id="transactionPageTitle">Rekodi ya fedha</h1>
-      <p class="page-description">Jaza taarifa za muamala. Miamala itahifadhiwa kwenye akaunti yako ikiwa ruhusa za Firestore zinaruhusu.</p>
-
-      <div class="panel">
-        <div id="transactionMessage" class="form-message hidden" role="status"></div>
-
-        <form id="transactionForm">
-          <div class="form-grid">
-            <div class="field">
-              <label for="date">Tarehe</label>
-              <input type="date" id="date" required>
-            </div>
-            <div class="field">
-              <label for="type">Aina ya muamala</label>
-              <select id="type" required>
-                <option value="in">Mapato</option>
-                <option value="out">Matumizi</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="field">
-            <label for="description">Maelezo ya muamala</label>
-            <input type="text" id="description" maxlength="180" placeholder="Mfano: Mauzo ya mahindi" required>
-          </div>
-
-          <div class="form-grid">
-            <div class="field">
-              <label for="person">Mhusika / Chanzo</label>
-              <input type="text" id="person" maxlength="100" placeholder="Mfano: Mnunuzi au muuzaji">
-            </div>
-            <div class="field">
-              <label for="amount">Kiasi (TZS)</label>
-              <input type="number" id="amount" min="1" step="1" placeholder="Mfano: 50000" required>
-            </div>
-          </div>
-
-          <button class="primary" id="saveButton" type="submit">💾 Hifadhi muamala</button>
-          <button class="secondary" type="button" data-nav="dashboard">Ghairi</button>
-        </form>
-      </div>
-    </section>
-
-    <!-- REPORTS -->
-    <section id="reportPage" class="hidden">
-      <h1 class="page-title">Ripoti za fedha</h1>
-      <p class="page-description">Muhtasari wa mapato, matumizi na salio kutoka kwenye miamala yako.</p>
-
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-label">Mapato yote</div><div class="stat-value income" id="reportIncome">TZS 0</div></div>
-        <div class="stat-card"><div class="stat-label">Matumizi yote</div><div class="stat-value expense" id="reportExpense">TZS 0</div></div>
-        <div class="stat-card"><div class="stat-label">Salio</div><div class="stat-value" id="reportBalance">TZS 0</div></div>
-      </div>
-
-      <section class="panel" style="margin-top:20px">
-        <h2>Ripoti ya miamala</h2>
-        <p class="muted small">Pakua jedwali la miamala katika mfumo wa CSV kwa matumizi kwenye Excel au programu nyingine zinazounga mkono CSV.</p>
-        <button class="primary" id="exportButton">⬇ Pakua ripoti ya CSV</button>
-        <button class="secondary" data-nav="dashboard">Rudi dashboard</button>
-      </section>
-    </section>
-
-    <!-- CROPS -->
-    <section id="cropsPage" class="hidden">
-      <h1 class="page-title">🌱 Usimamizi wa mazao</h1>
-      <p class="page-description">Sehemu ya mazao ya shamba lako.</p>
-
-      <div class="panel">
-        <h2>Usajili wa zao</h2>
-        <p class="muted">Fomu hii ya msingi hukuwezesha kuandika taarifa za zao kwenye kifaa chako. Bado haijahusishwa na hifadhi ya Firebase.</p>
-
-        <form id="cropForm">
-          <div class="form-grid">
-            <div class="field">
-              <label for="cropName">Jina la zao</label>
-              <input id="cropName" required placeholder="Mfano: Mahindi">
-            </div>
-            <div class="field">
-              <label for="cropArea">Eneo / ukubwa wa shamba</label>
-              <input id="cropArea" required placeholder="Mfano: Ekari 2">
-            </div>
-          </div>
-          <div class="field">
-            <label for="cropSeason">Msimu au tarehe ya kupanda</label>
-            <input id="cropSeason" placeholder="Mfano: Msimu wa mvua">
-          </div>
-          <button class="primary" type="submit">Hifadhi kwenye kifaa</button>
-        </form>
-        <div id="cropList" style="margin-top:20px"></div>
-      </div>
-    </section>
-
-    <!-- LIVESTOCK -->
-    <section id="livestockPage" class="hidden">
-      <h1 class="page-title">🐄 Usimamizi wa mifugo</h1>
-      <p class="page-description">Andika taarifa za msingi za mifugo yako kwenye kifaa hiki.</p>
-
-      <div class="panel">
-        <form id="livestockForm">
-          <div class="form-grid">
-            <div class="field">
-              <label for="animalType">Aina ya mnyama</label>
-              <select id="animalType" required>
-                <option value="">Chagua</option>
-                <option>Ng'ombe</option>
-                <option>Mbuzi</option>
-                <option>Kondoo</option>
-                <option>Kuku</option>
-                <option>Nguruwe</option>
-                <option>Nyingine</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="animalCount">Idadi</label>
-              <input type="number" id="animalCount" min="1" step="1" required>
-            </div>
-          </div>
-          <div class="field">
-            <label for="animalNotes">Maelezo</label>
-            <textarea id="animalNotes" rows="3" placeholder="Mfano: Chanjo au taarifa nyingine"></textarea>
-          </div>
-          <button class="primary" type="submit">Hifadhi kwenye kifaa</button>
-        </form>
-        <div id="livestockList" style="margin-top:20px"></div>
-      </div>
-    </section>
-
-    <!-- PROFILE -->
-    <section id="profilePage" class="hidden">
-      <h1 class="page-title">Wasifu wangu</h1>
-      <p class="page-description">Angalia na sasisha jina linaloonekana kwenye programu.</p>
-
-      <div class="panel" style="max-width:650px">
-        <div class="profile-image" id="profileImagePreview">👤</div>
-
-        <div class="field">
-          <label for="profileImageFile">Picha ya wasifu</label>
-          <input type="file" id="profileImageFile" accept="image/*">
-          <div class="muted small">Picha itahifadhiwa kwenye kifaa hiki.</div>
-        </div>
-
-        <div class="field">
-          <label for="profileName">Jina</label>
-          <input id="profileName" maxlength="100">
-        </div>
-
-        <div class="field">
-          <label for="profileEmail">Barua pepe ya akaunti</label>
-          <input id="profileEmail" type="email" disabled>
-        </div>
-
-        <button class="primary" id="saveProfileButton">Hifadhi jina</button>
-        <button class="danger" id="profileLogout" style="margin-left:5px">Toka</button>
-        <div id="profileMessage" class="form-message hidden" style="margin-top:15px"></div>
-      </div>
-    </section>
-
-    <!-- SETTINGS -->
-    <section id="settingsPage" class="hidden">
-      <h1 class="page-title">⚙️ Settings</h1>
-      <p class="page-description">Badilisha mwonekano na utambulisho wa programu kwenye kifaa hiki.</p>
-
-      <div class="panel">
-        <h2>Mwonekano</h2>
-        <div class="setting-row">
-          <div>
-            <strong>Dark mode</strong>
-            <div class="muted small">Tumia mandhari ya giza.</div>
-          </div>
-          <label class="switch" aria-label="Washa dark mode">
-            <input type="checkbox" id="darkModeToggle">
-            <span class="slider"></span>
-          </label>
+          <h1>I & E ShambaSmart</h1>
+          <small id="headerUser">Karibu</small>
         </div>
       </div>
 
-      <div class="panel" style="margin-top:18px">
-        <h2>Logo ya programu</h2>
-        <p class="muted small">Chagua logo kutoka kwenye simu. Logo itahifadhiwa kwenye kifaa hiki pekee.</p>
-        <div class="image-preview" id="logoPreview"><span>IE — Logo ya ShambaSmart</span></div>
-        <div class="field">
-          <label for="logoFile">Chagua picha ya logo</label>
-          <input type="file" id="logoFile" accept="image/*">
-        </div>
-        <button class="secondary" id="removeLogoButton">Ondoa logo</button>
-      </div>
-
-      <div class="panel" style="margin-top:18px">
-        <h2>Picha ya shamba / jalada</h2>
-        <p class="muted small">Weka picha ya shamba lako. Picha itahifadhiwa kwenye kifaa hiki pekee.</p>
-        <div class="image-preview" id="coverPreview"><span>🌾 Picha ya shamba lako</span></div>
-        <div class="field">
-          <label for="coverFile">Chagua picha</label>
-          <input type="file" id="coverFile" accept="image/*">
-        </div>
-        <button class="secondary" id="removeCoverButton">Ondoa picha</button>
-      </div>
-
-      <div class="panel" style="margin-top:18px">
-        <h2>Akaunti na data</h2>
-        <p class="muted small">Mipangilio ya picha na mandhari huhifadhiwa kwenye kifaa hiki. Miamala hutegemea Firebase Firestore.</p>
-        <button class="primary" data-nav="profile">Fungua wasifu</button>
-        <button class="danger" id="settingsLogout" style="margin-left:5px">Toka kwenye akaunti</button>
-      </div>
-    </section>
-
-  </main>
-
-  <nav class="bottom-nav" id="bottomNav" aria-label="Menyu ya chini">
-    <button data-nav="dashboard" class="active"><span>🏠</span>Nyumbani</button>
-    <button data-nav="in"><span>💰</span>Fedha</button>
-    <button data-nav="report"><span>📊</span>Ripoti</button>
-    <button data-nav="profile"><span>👤</span>Wasifu</button>
-  </nav>
-
-  <footer class="site-footer">© <span id="currentYear"></span> I & E ShambaSmart · Usimamizi wa shamba kwa urahisi</footer>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
-
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      onAuthStateChanged,
-      signOut,
-      updateProfile
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      getDocs,
-      doc,
-      setDoc,
-      query,
-      orderBy,
-      serverTimestamp
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
-    // Firebase configuration yako
-    const firebaseConfig = {
-      apiKey: "AIzaSyB8yfl5dkqoN-skeAAJtOwULc_iTyr9tPk",
-      authDomain: "ie-shambasmart.firebaseapp.com",
-      projectId: "ie-shambasmart",
-      storageBucket: "ie-shambasmart.firebasestorage.app",
-      messagingSenderId: "895715686352",
-      appId: "1:895715686352:web:baa408a762fd60f9cf6bd5",
-      measurementId: "G-37FEVMD62V"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    let currentUser = null;
-    let transactions = [];
-    let selectedAction = "in";
-    let activePage = "dashboard";
-    let messageTimer = null;
-
-    const $ = id => document.getElementById(id);
-
-    const pageIds = {
-      dashboard: "dashboardPage",
-      auth: "authPage",
-      in: "transactionPage",
-      out: "transactionPage",
-      report: "reportPage",
-      crops: "cropsPage",
-      livestock: "livestockPage",
-      profile: "profilePage",
-      settings: "settingsPage"
-    };
-
-    function money(value) {
-      return new Intl.NumberFormat("sw-TZ", {
-        style: "currency",
-        currency: "TZS",
-        maximumFractionDigits: 0
-      }).format(Number(value) || 0);
-    }
-
-    function showMessage(element, text, kind = "") {
-      element.textContent = text;
-      element.className = "form-message" + (kind ? " " + kind : "");
-      element.classList.remove("hidden");
-
-      if (element === $("globalMessage")) {
-        clearTimeout(messageTimer);
-        messageTimer = setTimeout(() => element.classList.add("hidden"), 6500);
-      }
-    }
-
-    function clearMessage(element) {
-      element.textContent = "";
-      element.className = "form-message hidden";
-    }
-
-    function closeDrawer() {
-      $("sideDrawer").classList.remove("open");
-      $("drawerOverlay").classList.add("hidden");
-    }
-
-    function openDrawer() {
-      $("sideDrawer").classList.add("open");
-      $("drawerOverlay").classList.remove("hidden");
-    }
-
-    function updateNavigation() {
-      document.querySelectorAll("[data-nav]").forEach(button => {
-        const destination = button.dataset.nav;
-        button.classList.toggle("active", destination === activePage);
-      });
-    }
-
-    function navigate(page) {
-      if (!pageIds[page]) page = "dashboard";
-
-      if (["in", "out", "report", "crops", "livestock", "profile", "settings"].includes(page) && !currentUser) {
-        selectedAction = page;
-        page = "auth";
-      }
-
-      activePage = page;
-
-      Object.values(pageIds).forEach(id => $(id)?.classList.add("hidden"));
-      $(pageIds[page])?.classList.remove("hidden");
-
-      $("bottomNav").classList.toggle("hidden", !currentUser);
-      $("headerAuthButton").textContent = currentUser ? "Akaunti" : "Ingia";
-      closeDrawer();
-      updateNavigation();
-
-      if (page === "in" || page === "out") {
-        $("type").value = page;
-        $("transactionPageTitle").textContent = page === "in" ? "➕ Rekodi mapato" : "➖ Rekodi matumizi";
-        clearMessage($("transactionMessage"));
-      }
-
-      if (page === "profile" && currentUser) {
-        $("profileName").value = currentUser.displayName || "";
-        $("profileEmail").value = currentUser.email || "";
-        updateProfileImage();
-      }
-
-      if (page === "settings") {
-        $("darkModeToggle").checked = document.body.classList.contains("dark");
-        updateImagePreviews();
-      }
-
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    }
-
-    document.querySelectorAll("[data-nav]").forEach(button => {
-      button.addEventListener("click", () => navigate(button.dataset.nav));
-    });
-
-    $("menuButton").addEventListener("click", openDrawer);
-    $("closeDrawer").addEventListener("click", closeDrawer);
-    $("drawerOverlay").addEventListener("click", closeDrawer);
-
-    $("headerAuthButton").addEventListener("click", () => {
-      navigate(currentUser ? "profile" : "auth");
-    });
-
-    $("backDashboard").addEventListener("click", () => navigate("dashboard"));
-
-    $("showLogin").addEventListener("click", () => {
-      $("loginForm").classList.remove("hidden");
-      $("registerForm").classList.add("hidden");
-      $("showLogin").classList.add("active");
-      $("showRegister").classList.remove("active");
-      clearMessage($("authMessage"));
-    });
-
-    $("showRegister").addEventListener("click", () => {
-      $("registerForm").classList.remove("hidden");
-      $("loginForm").classList.add("hidden");
-      $("showRegister").classList.add("active");
-      $("showLogin").classList.remove("active");
-      clearMessage($("authMessage"));
-    });
-
-    function friendlyAuthError(error) {
-      const code = error?.code || "";
-
-      if (code.includes("email-already-in-use")) return "Barua pepe hii tayari imesajiliwa. Jaribu kuingia.";
-      if (code.includes("invalid-email")) return "Barua pepe haijaandikwa kwa usahihi.";
-      if (code.includes("weak-password")) return "Nenosiri ni dhaifu. Tumia angalau herufi 6.";
-      if (code.includes("invalid-credential") || code.includes("wrong-password") || code.includes("user-not-found")) return "Barua pepe au nenosiri si sahihi.";
-      if (code.includes("network-request-failed")) return "Tatizo la intaneti. Angalia muunganisho wako.";
-      if (code.includes("permission-denied")) return "Firebase imekataa ruhusa ya kufanya kitendo hiki. Angalia Firestore Rules.";
-      return error?.message || "Kumetokea hitilafu. Jaribu tena.";
-    }
-
-    $("loginForm").addEventListener("submit", async event => {
-      event.preventDefault();
-      const button = $("loginButton");
-      button.disabled = true;
-      button.textContent = "Inaingia...";
-      clearMessage($("authMessage"));
-
-      try {
-        await signInWithEmailAndPassword(
-          auth,
-          $("loginEmail").value.trim(),
-          $("loginPassword").value
-        );
-        $("loginForm").reset();
-      } catch (error) {
-        showMessage($("authMessage"), friendlyAuthError(error), "error");
-      } finally {
-        button.disabled = false;
-        button.textContent = "Ingia kwenye akaunti";
-      }
-    });
-
-    $("registerForm").addEventListener("submit", async event => {
-      event.preventDefault();
-      const button = $("registerButton");
-      button.disabled = true;
-      button.textContent = "Inatengeneza akaunti...";
-      clearMessage($("authMessage"));
-
-      const name = $("registerName").value.trim();
-      const email = $("registerEmail").value.trim();
-      const password = $("registerPassword").value;
-
-      try {
-        const credential = await createUserWithEmailAndPassword(auth, email, password);
-
-        await updateProfile(credential.user, { displayName: name });
-
-        // Mtumiaji mpya anasajiliwa kama user, si admin.
-        await setDoc(doc(db, "users", credential.user.uid), {
-          uid: credential.user.uid,
-          name,
-          email,
-          role: "user",
-          createdAt: serverTimestamp()
-        });
-
-        $("registerForm").reset();
-        navigate("dashboard");
-      } catch (error) {
-        showMessage($("authMessage"), friendlyAuthError(error), "error");
-      } finally {
-        button.disabled = false;
-        button.textContent = "Tengeneza akaunti";
-      }
-    });
-
-    async function logout() {
-      try {
-        await signOut(auth);
-        transactions = [];
-        navigate("dashboard");
-        showMessage($("globalMessage"), "Umetoka kwenye akaunti yako.", "success");
-      } catch (error) {
-        showMessage($("globalMessage"), friendlyAuthError(error), "error");
-      }
-    }
-
-    $("drawerLogout").addEventListener("click", logout);
-    $("profileLogout").addEventListener("click", logout);
-    $("settingsLogout").addEventListener("click", logout);
-
-    onAuthStateChanged(auth, async user => {
-      currentUser = user || null;
-
-      $("drawerUser").textContent = user ? (user.displayName || user.email) : "Karibu";
-      $("headerAuthButton").textContent = user ? "Wasifu" : "Ingia";
-
-      if (user) {
-        $("welcomeTitle").textContent = "Karibu, " + (user.displayName || "mtumiaji") + " 🌱";
-        $("welcomeDescription").textContent = "Simamia mapato, matumizi na shughuli za shamba lako sehemu moja.";
-
-        await loadTransactions();
-
-        if (activePage === "auth") {
-          const destination = selectedAction;
-          navigate(destination === "auth" ? "dashboard" : destination);
-        } else {
-          navigate(activePage);
-        }
-      } else {
-        transactions = [];
-        renderTransactions();
-        updateTotals();
-        navigate(activePage === "auth" ? "auth" : "dashboard");
-      }
-    });
-
-    async function loadTransactions() {
-      if (!currentUser) return;
-
-      try {
-        const q = query(collection(db, "transactions"), orderBy("date", "desc"));
-        const snapshot = await getDocs(q);
-        transactions = snapshot.docs
-          .map(item => ({ id: item.id, ...item.data() }))
-          .filter(item => item.uid === currentUser.uid);
-
-        updateTotals();
-        renderTransactions();
-      } catch (error) {
-        console.error("Transaction loading error:", error);
-        showMessage(
-          $("globalMessage"),
-          "Imeshindikana kusoma miamala. Kagua intaneti na Firestore Rules. Maelezo: " + friendlyAuthError(error),
-          "error"
-        );
-      }
-    }
-
-    function updateTotals() {
-      const totalIn = transactions
-        .filter(item => item.type === "in")
-        .reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
-
-      const totalOut = transactions
-        .filter(item => item.type === "out")
-        .reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
-
-      const balance = totalIn - totalOut;
-
-      $("totalIn").textContent = money(totalIn);
-      $("totalOut").textContent = money(totalOut);
-      $("balance").textContent = money(balance);
-
-      $("reportIncome").textContent = money(totalIn);
-      $("reportExpense").textContent = money(totalOut);
-      $("reportBalance").textContent = money(balance);
-
-      $("chartIncomeText").textContent = money(totalIn);
-      $("chartExpenseText").textContent = money(totalOut);
-
-      const max = Math.max(totalIn, totalOut, 1);
-      $("chartIncome").style.width = (totalIn / max * 100) + "%";
-      $("chartExpense").style.width = (totalOut / max * 100) + "%";
-
-      $("balance").classList.toggle("expense", balance < 0);
-      $("balance").classList.toggle("income", balance >= 0);
-      $("reportBalance").classList.toggle("expense", balance < 0);
-      $("reportBalance").classList.toggle("income", balance >= 0);
-    }
-
-    function renderTransactions() {
-      const tbody = $("transactionRows");
-      tbody.replaceChildren();
-
-      if (!currentUser) {
-        const row = tbody.insertRow();
-        const cell = row.insertCell();
-        cell.colSpan = 5;
-        cell.className = "empty-state";
-        cell.textContent = "Ingia kwenye akaunti kuona miamala yako.";
-        return;
-      }
-
-      if (transactions.length === 0) {
-        const row = tbody.insertRow();
-        const cell = row.insertCell();
-        cell.colSpan = 5;
-        cell.className = "empty-state";
-        cell.textContent = "Bado hakuna miamala. Rekodi mapato au matumizi yako ya kwanza.";
-        return;
-      }
-
-      transactions.slice(0, 10).forEach(item => {
-        const row = tbody.insertRow();
-
-        const dateCell = row.insertCell();
-        dateCell.textContent = item.date || "—";
-
-        const typeCell = row.insertCell();
-        const pill = document.createElement("span");
-        pill.className = "type-pill " + (item.type === "in" ? "pill-in" : "pill-out");
-        pill.textContent = item.type === "in" ? "Mapato" : "Matumizi";
-        typeCell.appendChild(pill);
-
-        row.insertCell().textContent = item.description || "—";
-        row.insertCell().textContent = item.person || "—";
-
-        const amountCell = row.insertCell();
-        amountCell.textContent = money(item.amount);
-        amountCell.className = item.type === "in" ? "income" : "expense";
-      });
-    }
-
-    $("transactionForm").addEventListener("submit", async event => {
-      event.preventDefault();
-
-      if (!currentUser) {
-        navigate("auth");
-        return;
-      }
-
-      const button = $("saveButton");
-      button.disabled = true;
-      button.textContent = "Inahifadhi...";
-      clearMessage($("transactionMessage"));
-
-      const data = {
-        uid: currentUser.uid,
-        date: $("date").value,
-        type: $("type").value,
-        description: $("description").value.trim(),
-        person: $("person").value.trim(),
-        amount: Number($("amount").value),
-        createdAt: serverTimestamp()
-      };
-
-      if (!data.date || !data.description || !Number.isFinite(data.amount) || data.amount <= 0) {
-        showMessage($("transactionMessage"), "Jaza tarehe, maelezo na kiasi sahihi.", "error");
-        button.disabled = false;
-        button.textContent = "💾 Hifadhi muamala";
-        return;
-      }
-
-      try {
-        await addDoc(collection(db, "transactions"), data);
-        $("transactionForm").reset();
-        $("date").value = new Date().toISOString().slice(0, 10);
-
-        await loadTransactions();
-
-        showMessage($("globalMessage"), "Muamala umehifadhiwa.", "success");
-        navigate("dashboard");
-      } catch (error) {
-        console.error("Transaction save error:", error);
-        showMessage(
-          $("transactionMessage"),
-          "Muamala haujahifadhiwa. Kagua Firestore Rules. " + friendlyAuthError(error),
-          "error"
-        );
-      } finally {
-        button.disabled = false;
-        button.textContent = "💾 Hifadhi muamala";
-      }
-    });
-
-    $("refreshButton").addEventListener("click", loadTransactions);
-    $("viewAllTransactions").addEventListener("click", () => navigate("report"));
-
-    $("exportButton").addEventListener("click", () => {
-      if (!currentUser) {
-        navigate("auth");
-        return;
-      }
-
-      if (transactions.length === 0) {
-        showMessage($("globalMessage"), "Hakuna miamala ya kupakua kwa sasa.", "error");
-        navigate("dashboard");
-        return;
-      }
-
-      const rows = [
-        ["Tarehe", "Aina", "Maelezo", "Mhusika", "Kiasi (TZS)"],
-        ...transactions.map(item => [
-          item.date || "",
-          item.type === "in" ? "Mapato" : "Matumizi",
-          item.description || "",
-          item.person || "",
-          item.amount || 0
-        ])
-      ];
-
-      const csv = rows.map(row =>
-        row.map(value => '"' + String(value).replaceAll('"', '""') + '"').join(",")
-      ).join("\r\n");
-
-      const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "IE-ShambaSmart-Ripoti.csv";
-      link.click();
-      URL.revokeObjectURL(url);
-    });
-
-    // Picha: punguza ukubwa kabla ya kuhifadhi ili kupunguza matumizi ya localStorage.
-    async function compressImage(file) {
-      if (!file || !file.type.startsWith("image/")) {
-        throw new Error("Chagua faili la picha.");
-      }
-
-      const dataUrl = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
-
-      const image = new Image();
-
-      await new Promise((resolve, reject) => {
-        image.onload = resolve;
-        image.onerror = reject;
-        image.src = dataUrl;
-      });
-
-      const maxSize = 700;
-      const ratio = Math.min(1, maxSize / Math.max(image.width, image.height));
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.max(1, Math.round(image.width * ratio));
-      canvas.height = Math.max(1, Math.round(image.height * ratio));
-
-      const context = canvas.getContext("2d");
-      context.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-      return canvas.toDataURL("image/jpeg", 0.75);
-    }
-
-    function getLocalImage(key) {
-      try { return localStorage.getItem(key); }
-      catch { return null; }
-    }
-
-    function setLocalImage(key, value) {
-      try {
-        localStorage.setItem(key, value);
-        return true;
-      } catch {
-        showMessage(
-          $("globalMessage"),
-          "Hifadhi ya simu imejaa. Ondoa picha nyingine au chagua picha ndogo.",
-          "error"
-        );
-        return false;
-      }
-    }
-
-    function displayImage(container, data, fallback) {
-      container.replaceChildren();
-
-      if (data) {
-        const image = document.createElement("img");
-        image.src = data;
-        image.alt = "Picha iliyochaguliwa";
-        container.appendChild(image);
-      } else {
-        container.textContent = fallback;
-      }
-    }
-
-    function updateImagePreviews() {
-      const logo = getLocalImage("ieshamba_logo");
-      const cover = getLocalImage("ieshamba_cover");
-
-      displayImage($("logoPreview"), logo, "IE — Logo ya ShambaSmart");
-      displayImage($("coverPreview"), cover, "🌾 Picha ya shamba lako");
-
-      updateHeaderLogo();
-    }
-
-    function updateHeaderLogo() {
-      const logo = getLocalImage("ieshamba_logo");
-
-      [$("headerLogo"), $("drawerLogo")].forEach(container => {
-        container.replaceChildren();
-
-        if (logo) {
-          const image = document.createElement("img");
-          image.src = logo;
-          image.alt = "Logo ya ShambaSmart";
-          container.appendChild(image);
-        } else {
-          container.textContent = "IE";
-        }
-      });
-    }
-
-    function updateProfileImage() {
-      const image = getLocalImage("ieshamba_profile");
-      displayImage($("profileImagePreview"), image, "👤");
-    }
-
-    async function handleImageUpload(inputId, storageKey, previewId, fallback) {
-      const input = $(inputId);
-      input.addEventListener("change", async () => {
-        const file = input.files?.[0];
-        if (!file) return;
-
-        try {
-          const compressed = await compressImage(file);
-          if (!setLocalImage(storageKey, compressed)) return;
-
-          displayImage($(previewId), compressed, fallback);
-
-          if (storageKey === "ieshamba_logo") updateHeaderLogo();
-          if (storageKey === "ieshamba_profile") updateProfileImage();
-
-          showMessage($("globalMessage"), "Picha imehifadhiwa kwenye kifaa hiki.", "success");
-        } catch (error) {
-          showMessage($("globalMessage"), error.message || "Imeshindikana kupakia picha.", "error");
-        }
-      });
-    }
-
-    handleImageUpload("logoFile", "ieshamba_logo", "logoPreview", "IE — Logo ya ShambaSmart");
-    handleImageUpload("coverFile", "ieshamba_cover", "coverPreview", "🌾 Picha ya shamba lako");
-    handleImageUpload("profileImageFile", "ieshamba_profile", "profileImagePreview", "👤");
-
-    $("removeLogoButton").addEventListener("click", () => {
-      localStorage.removeItem("ieshamba_logo");
-      updateImagePreviews();
-    });
-
-    $("removeCoverButton").addEventListener("click", () => {
-      localStorage.removeItem("ieshamba_cover");
-      updateImagePreviews();
-    });
-
-    $("darkModeToggle").addEventListener("change", event => {
-      document.body.classList.toggle("dark", event.target.checked);
-      localStorage.setItem("ieshamba_dark", event.target.checked ? "1" : "0");
-    });
-
-    $("saveProfileButton").addEventListener("click", async () => {
-      if (!currentUser) return;
-
-      const name = $("profileName").value.trim();
-      if (!name) {
-        showMessage($("profileMessage"), "Andika jina lako.", "error");
-        return;
-      }
-
-      try {
-        await updateProfile(currentUser, { displayName: name });
-        $("welcomeTitle").textContent = "Karibu, " + name + " 🌱";
-        $("drawerUser").textContent = name;
-        showMessage($("profileMessage"), "Jina limehifadhiwa.", "success");
-      } catch (error) {
-        showMessage($("profileMessage"), friendlyAuthError(error), "error");
-      }
-    });
-
-    // Mazao na mifugo kwa sasa huhifadhiwa kwenye kifaa hiki pekee.
-    function readLocalList(key) {
-      try { return JSON.parse(localStorage.getItem(key) || "[]"); }
-      catch { return []; }
-    }
-
-    function saveLocalList(key, list) {
-      localStorage.setItem(key, JSON.stringify(list));
-    }
-
-    $("cropForm").addEventListener("submit", event => {
-      event.preventDefault();
-
-      const crops = readLocalList("ieshamba_crops");
-      crops.push({
-        name: $("cropName").value.trim(),
-        area: $("cropArea").value.trim(),
-        season: $("cropSeason").value.trim(),
-        date: new Date().toLocaleDateString("sw-TZ")
-      });
-
-      saveLocalList("ieshamba_crops", crops);
-      $("cropForm").reset();
-      renderCropList();
-      showMessage($("globalMessage"), "Taarifa ya zao imehifadhiwa kwenye kifaa hiki.", "success");
-    });
-
-    function renderCropList() {
-      const container = $("cropList");
-      container.replaceChildren();
-      const crops = readLocalList("ieshamba_crops");
-
-      const heading = document.createElement("h3");
-      heading.textContent = "Mazao yaliyorekodiwa";
-      container.appendChild(heading);
-
-      if (!crops.length) {
-        const text = document.createElement("p");
-        text.className = "muted small";
-        text.textContent = "Bado hakuna mazao yaliyorekodiwa.";
-        container.appendChild(text);
-        return;
-      }
-
-      crops.forEach(crop => {
-        const card = document.createElement("div");
-        card.className = "setting-card";
-        card.style.marginBottom = "10px";
-
-        const title = document.createElement("strong");
-        title.textContent = crop.name;
-        const details = document.createElement("p");
-        details.className = "muted small";
-        details.textContent = "Eneo: " + crop.area + (crop.season ? " · Msimu: " + crop.season : "");
-
-        card.append(title, details);
-        container.appendChild(card);
-      });
-    }
-
-    $("livestockForm").addEventListener("submit", event => {
-      event.preventDefault();
-
-      const animals = readLocalList("ieshamba_livestock");
-      animals.push({
-        type: $("animalType").value,
-        count: Number($("animalCount").value),
-        notes: $("animalNotes").value.trim()
-      });
-
-      saveLocalList("ieshamba_livestock", animals);
-      $("livestockForm").reset();
-      renderLivestockList();
-      showMessage($("globalMessage"), "Taarifa ya mifugo imehifadhiwa kwenye kifaa hiki.", "success");
-    });
-
-    function renderLivestockList() {
-      const container = $("livestockList");
-      container.replaceChildren();
-
-      const heading = document.createElement("h3");
-      heading.textContent = "Mifugo iliyorekodiwa";
-      container.appendChild(heading);
-
-      const animals = readLocalList("ieshamba_livestock");
-
-      if (!animals.length) {
-        const text = document.createElement("p");
-        text.className = "muted small";
-        text.textContent = "Bado hakuna mifugo iliyorekodiwa.";
-        container.appendChild(text);
-        return;
-      }
-
-      animals.forEach(animal => {
-        const card = document.createElement("div");
-        card.className = "setting-card";
-        card.style.marginBottom = "10px";
-
-        const title = document.createElement("strong");
-        title.textContent = animal.type + " — " + animal.count;
-        const details = document.createElement("p");
-        details.className = "muted small";
-        details.textContent = animal.notes || "Hakuna maelezo ya ziada.";
-
-        card.append(title, details);
-        container.appendChild(card);
-      });
-    }
-
-    // Mipangilio ya awali
-    if (localStorage.getItem("ieshamba_dark") === "1") {
-      document.body.classList.add("dark");
-      $("darkModeToggle").checked = true;
-    }
-
-    $("date").value = new Date().toISOString().slice(0, 10);
-    $("currentYear").textContent = new Date().getFullYear();
-
-    updateImagePreviews();
-    updateProfileImage();
-    renderCropList();
-    renderLivestockList();
-    updateTotals();
-    renderTransactions();
-    navigate("dashboard");
-  </script>
-</body>
-</html>
+      <button id="logout
