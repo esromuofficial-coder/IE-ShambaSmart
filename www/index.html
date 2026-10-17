@@ -1,120 +1,1864 @@
---- a/www/index.html
-+++ b/www/index.html
-@@ -2027,11 +2027,106 @@
--function printReport() {
--  renderReport();
--
--  if (reportTransactions.length === 0) {
--    if (!confirm("Hakuna miamala katika kipindi hiki. Uchapishe ripoti tupu?")) {
--      return;
--    }
--  }
--
--  window.print();
--}
-+async function loadPdfLibrary(url) {
-+  return new Promise(function(resolve, reject) {
-+    const existing = document.querySelector('script[data-pdf-library="' + url + '"]');
-+    if (existing) {
-+      if (existing.dataset.loaded === "true") return resolve();
-+      existing.addEventListener("load", resolve, { once: true });
-+      existing.addEventListener("error", reject, { once: true });
-+      return;
-+    }
-+
-+    const script = document.createElement("script");
-+    script.src = url;
-+    script.dataset.pdfLibrary = url;
-+    script.onload = function() {
-+      script.dataset.loaded = "true";
-+      resolve();
-+    };
-+    script.onerror = function() {
-+      reject(new Error("Imeshindikana kupakia maktaba ya PDF."));
-+    };
-+    document.head.appendChild(script);
-+  });
-+}
-+
-+async function printReport() {
-+  renderReport();
-+
-+  if (reportTransactions.length === 0 &&
-+      !confirm("Hakuna miamala katika kipindi hiki. Utengeneze PDF tupu?")) {
-+    return;
-+  }
-+
-+  const button = document.querySelector('button[onclick="printReport()"]');
-+  const oldText = button ? button.textContent : "";
-+
-+  try {
-+    if (button) {
-+      button.disabled = true;
-+      button.textContent = "Inatengeneza PDF...";
-+    }
-+
-+    await loadPdfLibrary(
-+      "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
-+    );
-+    await loadPdfLibrary(
-+      "https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"
-+    );
-+
-+    const JsPDF = window.jspdf && window.jspdf.jsPDF;
-+    if (!JsPDF) throw new Error("Maktaba ya PDF haijapatikana.");
-+
-+    const pdf = new JsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
-+    const start = $("reportStart").value;
-+    const end = $("reportEnd").value;
-+    const period = (start || end)
-+      ? (start ? formatDate(start) : "Mwanzo") + " hadi " +
-+        (end ? formatDate(end) : "Leo")
-+      : "Kipindi chote";
-+
-+    pdf.setFontSize(18);
-+    pdf.text("I & E ShambaSmart", 14, 16);
-+    pdf.setFontSize(13);
-+    pdf.text("Ripoti ya mapato na matumizi", 14, 24);
-+    pdf.setFontSize(10);
-+    pdf.text("Kipindi: " + period, 14, 31);
-+    pdf.text("Imetengenezwa: " + new Date().toLocaleString("sw-TZ"), 14, 37);
-+
-+    const totals = calculateTotals(reportTransactions);
-+    pdf.text("Mapato: " + money(totals.income), 14, 45);
-+    pdf.text("Matumizi: " + money(totals.expense), 85, 45);
-+    pdf.text("Salio: " + money(totals.balance), 160, 45);
-+    pdf.text("Miamala: " + String(totals.count), 230, 45);
-+
-+    const rows = reportTransactions.map(function(item) {
-+      return [
-+        item.date || "",
-+        item.type === "income" ? "Mapato" : "Matumizi",
-+        item.category || "",
-+        item.description || "",
-+        money(item.amount),
-+        item.payment || ""
-+      ];
-+    });
-+
-+    pdf.autoTable({
-+      startY: 52,
-+      head: [["Tarehe", "Aina", "Shughuli", "Maelezo", "Kiasi (TZS)", "Njia ya malipo"]],
-+      body: rows,
-+      styles: { fontSize: 8, cellPadding: 2, overflow: "linebreak" },
-+      headStyles: { fillColor: [23, 107, 58] },
-+      columnStyles: { 3: { cellWidth: 70 } },
-+      margin: { left: 14, right: 14 }
-+    });
-+
-+    pdf.save("IE-ShambaSmart-Ripoti-" + today() + ".pdf");
-+    toast("Ripoti ya PDF imepakuliwa.");
-+  } catch (error) {
-+    console.error(error);
-+    toast("PDF haikuweza kutengenezwa. Hakikisha intaneti ipo kisha jaribu tena.");
-+  } finally {
-+    if (button) {
-+      button.disabled = false;
-+      button.textContent = oldText;
-+    }
-+  }
-+}
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#14532d">
+
+  <title>I & E ShambaSmart</title>
+
+  <style>
+    :root {
+      --green: #166534;
+      --green-dark: #14532d;
+      --green-light: #dcfce7;
+      --background: #f3f7f3;
+      --white: #ffffff;
+      --text: #17251b;
+      --muted: #647067;
+      --border: #dce5dd;
+      --red: #b91c1c;
+      --orange: #b45309;
+      --shadow: 0 8px 24px rgba(20, 83, 45, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--background);
+      color: var(--text);
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .brand {
+      color: var(--green-dark);
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .brand span {
+      color: #65a30d;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* LOGIN */
+
+    .auth-page {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 22px;
+      background:
+        radial-gradient(circle at top right, #bbf7d0, transparent 38%),
+        linear-gradient(135deg, #f0fdf4, #e2e8f0);
+    }
+
+    .auth-card {
+      width: 100%;
+      max-width: 430px;
+      padding: 30px;
+      background: var(--white);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+    }
+
+    .auth-card h1 {
+      margin-bottom: 6px;
+    }
+
+    .auth-card .brand {
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 7px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    input,
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #fff;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--green);
+      box-shadow: 0 0 0 3px #dcfce7;
+    }
+
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 16px;
+      border: 0;
+      border-radius: 10px;
+      font-weight: 700;
+      transition: 0.2s;
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--green-dark);
+    }
+
+    .btn-light {
+      background: #e8f5eb;
+      color: var(--green-dark);
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: var(--red);
+    }
+
+    .btn-full {
+      width: 100%;
+    }
+
+    .auth-links {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 17px;
+    }
+
+    .text-button {
+      border: 0;
+      padding: 4px 0;
+      background: transparent;
+      color: var(--green);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .message {
+      margin: 14px 0;
+      padding: 12px;
+      border-radius: 9px;
+      font-size: 14px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .message.error {
+      color: #991b1b;
+      background: #fee2e2;
+    }
+
+    .message.success {
+      color: #166534;
+      background: #dcfce7;
+    }
+
+    .message.info {
+      color: #92400e;
+      background: #fef3c7;
+    }
+
+    /* APPLICATION */
+
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 15px 5%;
+      background: white;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .user-info {
+      text-align: right;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .user-info strong {
+      display: block;
+    }
+
+    .container {
+      width: min(1200px, 94%);
+      margin: 25px auto 45px;
+    }
+
+    .welcome {
+      margin-bottom: 22px;
+    }
+
+    .welcome h1 {
+      margin: 0 0 7px;
+      font-size: clamp(23px, 4vw, 31px);
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      padding: 20px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      box-shadow: var(--shadow);
+      min-width: 0;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .stat-value {
+      font-size: clamp(17px, 2vw, 25px);
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .green {
+      color: var(--green);
+    }
+
+    .red {
+      color: var(--red);
+    }
+
+    .section {
+      margin-bottom: 22px;
+      padding: 22px;
+      border: 1px solid var(--border);
+      border-radius: 15px;
+      background: white;
+      box-shadow: var(--shadow);
+    }
+
+    .section h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    .section-description {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .transaction-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 15px;
+    }
+
+    .form-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .table-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 15px;
+    }
+
+    .table-toolbar input {
+      max-width: 330px;
+    }
+
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 680px;
+    }
+
+    th,
+    td {
+      padding: 13px 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: #f0fdf4;
+      color: var(--green-dark);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .badge-income {
+      color: #166534;
+      background: #dcfce7;
+    }
+
+    .badge-expense {
+      color: #991b1b;
+      background: #fee2e2;
+    }
+
+    .small-button {
+      border: 0;
+      border-radius: 7px;
+      padding: 7px 10px;
+      background: #fee2e2;
+      color: #991b1b;
+      font-weight: 700;
+    }
+
+    .empty-state {
+      padding: 28px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .footer {
+      text-align: center;
+      padding: 25px 12px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 850px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .app-header {
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .auth-card {
+        padding: 23px;
+      }
+
+      .app-header {
+        padding: 13px;
+      }
+
+      .app-header .brand {
+        font-size: 19px;
+      }
+
+      .user-info {
+        display: none;
+      }
+
+      .header-right {
+        gap: 6px;
+      }
+
+      .header-right .btn {
+        padding: 9px;
+        font-size: 12px;
+      }
+
+      .container {
+        width: 94%;
+        margin-top: 18px;
+      }
+
+      .dashboard-grid {
+        gap: 10px;
+      }
+
+      .stat-card {
+        padding: 14px;
+      }
+
+      .section {
+        padding: 15px;
+      }
+
+      .transaction-form {
+        grid-template-columns: 1fr;
+      }
+
+      .form-actions {
+        grid-column: auto;
+      }
+    }
+
+    @media print {
+      .no-print,
+      .app-header,
+      #transactionSection,
+      .delete-column {
+        display: none !important;
+      }
+
+      body {
+        background: white;
+      }
+
+      .container {
+        width: 100%;
+        margin: 0;
+      }
+
+      .section,
+      .stat-card {
+        box-shadow: none;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- LOGIN / SIGNUP -->
+
+  <section id="authPage" class="auth-page">
+    <div class="auth-card">
+
+      <div class="brand">I & E <span>ShambaSmart</span></div>
+
+      <h1 id="authTitle">Karibu ShambaSmart</h1>
+
+      <p class="subtitle" id="authSubtitle">
+        Ingia kwenye akaunti yako ili kusimamia mapato na matumizi ya shamba.
+      </p>
+
+      <div id="authMessage" class="message hidden" role="status"></div>
+
+      <form id="loginForm">
+
+        <div id="nameGroup" class="form-group hidden">
+          <label for="fullName">Jina kamili</label>
+          <input
+            id="fullName"
+            type="text"
+            autocomplete="name"
+            placeholder="Andika jina lako"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="email">Barua pepe</label>
+          <input
+            id="email"
+            type="email"
+            autocomplete="email"
+            placeholder="mfano@email.com"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Nenosiri</label>
+          <input
+            id="password"
+            type="password"
+            autocomplete="current-password"
+            minlength="6"
+            placeholder="Weka nenosiri"
+            required
+          >
+        </div>
+
+        <button
+          id="loginButton"
+          type="submit"
+          class="btn btn-primary btn-full"
+        >
+          Login
+        </button>
+
+      </form>
+
+      <div class="auth-links">
+        <button id="toggleAuthButton" class="text-button" type="button">
+          Fungua akaunti mpya
+        </button>
+
+        <button id="forgotPasswordButton" class="text-button" type="button">
+          Umesahau nenosiri?
+        </button>
+      </div>
+
+      <p class="subtitle" style="margin-top:25px">
+        Project Owner: Ibrahim<br>
+        Project Supervisor: Esromu
+      </p>
+
+    </div>
+  </section>
+
+
+  <!-- MAIN APPLICATION -->
+
+  <div id="appPage" class="hidden">
+
+    <header class="app-header">
+
+      <div class="brand">I & E <span>ShambaSmart</span></div>
+
+      <div class="header-right">
+
+        <div class="user-info">
+          <strong id="headerUserName">Mtumiaji</strong>
+          <span id="headerUserEmail"></span>
+        </div>
+
+        <button id="languageButton" class="btn btn-light no-print">
+          English
+        </button>
+
+        <button id="logoutButton" class="btn btn-danger no-print">
+          Toka
+        </button>
+
+      </div>
+    </header>
+
+
+    <main class="container">
+
+      <div class="welcome">
+        <h1 id="welcomeTitle">Karibu kwenye ShambaSmart</h1>
+        <p id="welcomeSubtitle" class="subtitle">
+          Simamia mapato, matumizi na salio lako sehemu moja.
+        </p>
+      </div>
+
+
+      <!-- DASHBOARD -->
+
+      <section class="dashboard-grid">
+
+        <article class="stat-card">
+          <div id="incomeLabel" class="stat-label">Jumla ya mapato</div>
+          <div id="totalIncome" class="stat-value green">TZS 0</div>
+        </article>
+
+        <article class="stat-card">
+          <div id="expenseLabel" class="stat-label">Jumla ya matumizi</div>
+          <div id="totalExpenses" class="stat-value red">TZS 0</div>
+        </article>
+
+        <article class="stat-card">
+          <div id="balanceLabel" class="stat-label">Salio</div>
+          <div id="totalBalance" class="stat-value">TZS 0</div>
+        </article>
+
+        <article class="stat-card">
+          <div id="countLabel" class="stat-label">Idadi ya miamala</div>
+          <div id="transactionCount" class="stat-value">0</div>
+        </article>
+
+      </section>
+
+
+      <!-- ADD TRANSACTION -->
+
+      <section id="transactionSection" class="section">
+
+        <h2 id="formTitle">Ongeza muamala</h2>
+
+        <p id="formDescription" class="section-description">
+          Rekodi fedha zilizoingia au zilizotumika.
+        </p>
+
+        <div id="transactionMessage" class="message hidden" role="status"></div>
+
+        <form id="transactionForm" class="transaction-form">
+
+          <div class="form-group">
+            <label id="typeLabel" for="transactionType">Aina ya muamala</label>
+
+            <select id="transactionType" required>
+              <option value="income">Mapato</option>
+              <option value="expense">Matumizi</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label id="dateLabel" for="transactionDate">Tarehe</label>
+
+            <input
+              id="transactionDate"
+              type="date"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label id="descriptionLabel" for="description">
+              Maelezo
+            </label>
+
+            <input
+              id="description"
+              type="text"
+              maxlength="150"
+              placeholder="Mfano: Mauzo ya mahindi"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label id="personLabel" for="person">Mhusika / Mteja</label>
+
+            <input
+              id="person"
+              type="text"
+              maxlength="100"
+              placeholder="Jina la mteja au mhusika"
+            >
+          </div>
+
+          <div class="form-group">
+            <label id="amountLabel" for="amount">
+              Kiasi (TZS)
+            </label>
+
+            <input
+              id="amount"
+              type="number"
+              min="1"
+              step="1"
+              inputmode="numeric"
+              placeholder="Mfano: 50000"
+              required
+            >
+          </div>
+
+          <div class="form-actions">
+
+            <button
+              id="saveTransactionButton"
+              type="submit"
+              class="btn btn-primary"
+            >
+              Hifadhi muamala
+            </button>
+
+            <button
+              id="clearFormButton"
+              type="button"
+              class="btn btn-light"
+            >
+              Futa fomu
+            </button>
+
+          </div>
+
+        </form>
+
+      </section>
+
+
+      <!-- TRANSACTION HISTORY -->
+
+      <section class="section">
+
+        <h2 id="historyTitle">Historia ya miamala</h2>
+
+        <p id="historyDescription" class="section-description">
+          Hapa utaona miamala ya akaunti yako.
+        </p>
+
+        <div class="table-toolbar no-print">
+
+          <input
+            id="searchTransactions"
+            type="search"
+            placeholder="Tafuta muamala..."
+          >
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+
+            <button id="csvButton" class="btn btn-light" type="button">
+              Pakua CSV
+            </button>
+
+            <button id="printButton" class="btn btn-primary" type="button">
+              Chapisha / PDF
+            </button>
+
+          </div>
+
+        </div>
+
+        <div id="loadingMessage" class="message hidden" role="status"></div>
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th id="thDate">Tarehe</th>
+                <th id="thType">Aina</th>
+                <th id="thDescription">Maelezo</th>
+                <th id="thPerson">Mhusika</th>
+                <th id="thAmount">Kiasi</th>
+                <th class="delete-column no-print" id="thAction">Hatua</th>
+              </tr>
+            </thead>
+
+            <tbody id="transactionsBody"></tbody>
+
+          </table>
+
+        </div>
+
+        <div id="emptyTransactions" class="empty-state">
+          Bado hakuna miamala. Ongeza muamala wa kwanza.
+        </div>
+
+      </section>
+
+
+      <footer class="footer">
+        <strong>I & E ShambaSmart</strong><br>
+        Project Owner: Ibrahim | Project Supervisor: Esromu<br>
+        © <span id="currentYear"></span> ShambaSmart
+      </footer>
+
+    </main>
+
+  </div>
+
+
+  <!-- FIREBASE AND APPLICATION LOGIC -->
+
+  <script type="module">
+
+    import {
+      initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      sendPasswordResetEmail,
+      onAuthStateChanged,
+      updateProfile,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc,
+      collection,
+      addDoc,
+      getDocs,
+      query,
+      where,
+      deleteDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+
+    // FIREBASE CONFIGURATION
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB8yfl5dkqoN-skeAAJtOwULc_iTyr9tPk",
+      authDomain: "ie-shambasmart.firebaseapp.com",
+      projectId: "ie-shambasmart",
+      storageBucket: "ie-shambasmart.firebasestorage.app",
+      messagingSenderId: "895715686352",
+      appId: "1:895715686352:web:baa408a762fd60f9cf6bd5",
+      measurementId: "G-37FEVMD62V"
+    };
+
+
+    const firebaseApp = initializeApp(firebaseConfig);
+    const auth = getAuth(firebaseApp);
+    const db = getFirestore(firebaseApp);
+
+
+    // APPLICATION STATE
+
+    let currentUser = null;
+    let transactions = [];
+    let isSignup = false;
+    let language = "sw";
+
+
+    // SHORTCUTS
+
+    const $ = (id) => document.getElementById(id);
+
+    const authPage = $("authPage");
+    const appPage = $("appPage");
+
+    const loginForm = $("loginForm");
+    const loginButton = $("loginButton");
+
+    const authMessage = $("authMessage");
+    const transactionMessage = $("transactionMessage");
+
+    $("currentYear").textContent = new Date().getFullYear();
+
+
+    // TRANSLATIONS
+
+    const translations = {
+
+      sw: {
+        authTitle: "Karibu ShambaSmart",
+        authSubtitle: "Ingia kwenye akaunti yako ili kusimamia mapato na matumizi ya shamba.",
+        login: "Login",
+        signingIn: "Inaingia...",
+        signup: "Fungua akaunti mpya",
+        createAccount: "Tengeneza akaunti",
+        creatingAccount: "Inatengeneza akaunti...",
+        name: "Jina kamili",
+        email: "Barua pepe",
+        password: "Nenosiri",
+        forgot: "Umesahau nenosiri?",
+        welcome: "Karibu kwenye ShambaSmart",
+        welcomeSubtitle: "Simamia mapato, matumizi na salio lako sehemu moja.",
+        income: "Jumla ya mapato",
+        expenses: "Jumla ya matumizi",
+        balance: "Salio",
+        count: "Idadi ya miamala",
+        formTitle: "Ongeza muamala",
+        formDescription: "Rekodi fedha zilizoingia au zilizotumika.",
+        type: "Aina ya muamala",
+        date: "Tarehe",
+        description: "Maelezo",
+        person: "Mhusika / Mteja",
+        amount: "Kiasi (TZS)",
+        save: "Hifadhi muamala",
+        saving: "Inahifadhi...",
+        clear: "Futa fomu",
+        history: "Historia ya miamala",
+        historyDescription: "Hapa utaona miamala ya akaunti yako.",
+        search: "Tafuta muamala...",
+        csv: "Pakua CSV",
+        print: "Chapisha / PDF",
+        thDate: "Tarehe",
+        thType: "Aina",
+        thDescription: "Maelezo",
+        thPerson: "Mhusika",
+        thAmount: "Kiasi",
+        thAction: "Hatua",
+        incomeOption: "Mapato",
+        expenseOption: "Matumizi",
+        logout: "Toka",
+        empty: "Bado hakuna miamala. Ongeza muamala wa kwanza.",
+        delete: "Futa",
+        confirmDelete: "Una uhakika unataka kufuta muamala huu?",
+        loginSuccess: "Umeingia kwenye akaunti yako.",
+        signupSuccess: "Akaunti imetengenezwa. Karibu ShambaSmart.",
+        transactionSaved: "Muamala umehifadhiwa.",
+        transactionDeleted: "Muamala umefutwa.",
+        csvEmpty: "Hakuna miamala ya kupakua.",
+        csvSuccess: "Ripoti ya CSV imepakuliwa.",
+        enterEmail: "Weka barua pepe yako kwanza.",
+        resetSent: "Maelekezo ya kubadilisha nenosiri yametumwa kwenye barua pepe yako.",
+        invalidAmount: "Kiasi lazima kiwe zaidi ya sifuri.",
+        loadError: "Imeshindikana kupakia data. Angalia intaneti na ruhusa za Firestore.",
+        savingError: "Imeshindikana kuhifadhi. Jaribu tena.",
+        noPermission: "Huna ruhusa ya kufanya kitendo hiki.",
+        profileWarning: "Akaunti imefunguliwa, lakini taarifa za profaili hazijahifadhiwa kikamilifu.",
+        user: "Mtumiaji"
+      },
+
+      en: {
+        authTitle: "Welcome to ShambaSmart",
+        authSubtitle: "Sign in to manage your farm income and expenses.",
+        login: "Login",
+        signingIn: "Signing in...",
+        signup: "Create a new account",
+        createAccount: "Create account",
+        creatingAccount: "Creating account...",
+        name: "Full name",
+        email: "Email address",
+        password: "Password",
+        forgot: "Forgot password?",
+        welcome: "Welcome to ShambaSmart",
+        welcomeSubtitle: "Manage income, expenses and your balance in one place.",
+        income: "Total income",
+        expenses: "Total expenses",
+        balance: "Balance",
+        count: "Transactions",
+        formTitle: "Add transaction",
+        formDescription: "Record money received or spent.",
+        type: "Transaction type",
+        date: "Date",
+        description: "Description",
+        person: "Person / Customer",
+        amount: "Amount (TZS)",
+        save: "Save transaction",
+        saving: "Saving...",
+        clear: "Clear form",
+        history: "Transaction history",
+        historyDescription: "Your account transactions appear here.",
+        search: "Search transactions...",
+        csv: "Download CSV",
+        print: "Print / PDF",
+        thDate: "Date",
+        thType: "Type",
+        thDescription: "Description",
+        thPerson: "Person",
+        thAmount: "Amount",
+        thAction: "Action",
+        incomeOption: "Income",
+        expenseOption: "Expense",
+        logout: "Logout",
+        empty: "No transactions yet. Add your first transaction.",
+        delete: "Delete",
+        confirmDelete: "Are you sure you want to delete this transaction?",
+        loginSuccess: "You are signed in.",
+        signupSuccess: "Account created. Welcome to ShambaSmart.",
+        transactionSaved: "Transaction saved.",
+        transactionDeleted: "Transaction deleted.",
+        csvEmpty: "There are no transactions to download.",
+        csvSuccess: "CSV report downloaded.",
+        enterEmail: "Enter your email address first.",
+        resetSent: "Password reset instructions have been sent to your email.",
+        invalidAmount: "The amount must be greater than zero.",
+        loadError: "Could not load data. Check your internet connection and Firestore permissions.",
+        savingError: "Could not save. Please try again.",
+        noPermission: "You are not allowed to perform this action.",
+        profileWarning: "Account created, but the profile could not be fully saved.",
+        user: "User"
+      }
+
+    };
+
+
+    function t(key) {
+      return translations[language][key] || key;
+    }
+
+
+    // MESSAGE DISPLAY
+
+    function showMessage(element, message, type = "info") {
+      element.textContent = message;
+      element.className = "message " + type;
+      element.classList.remove("hidden");
+    }
+
+
+    function hideMessage(element) {
+      element.textContent = "";
+      element.className = "message hidden";
+    }
+
+
+    // FIREBASE ERROR MESSAGES
+
+    function readableFirebaseError(error) {
+
+      const code = error?.code || "";
+
+      const messages = {
+        "auth/invalid-email": "Barua pepe si sahihi.",
+        "auth/user-not-found": "Akaunti haijapatikana. Hakikisha barua pepe ni sahihi.",
+        "auth/wrong-password": "Nenosiri si sahihi.",
+        "auth/invalid-credential": "Barua pepe au nenosiri si sahihi.",
+        "auth/invalid-login-credentials": "Barua pepe au nenosiri si sahihi.",
+        "auth/email-already-in-use": "Barua pepe hii tayari imesajiliwa.",
+        "auth/weak-password": "Nenosiri ni dhaifu. Tumia angalau herufi 6.",
+        "auth/operation-not-allowed": "Email/Password haijawashwa kwenye Firebase Authentication.",
+        "auth/network-request-failed": "Tatizo la intaneti. Angalia muunganisho wako.",
+        "auth/too-many-requests": "Majaribio ni mengi sana. Subiri kidogo kisha ujaribu tena.",
+        "auth/unauthorized-domain": "Domain hii haijaidhinishwa kwenye Firebase Authentication.",
+        "permission-denied": "Firestore imekataa ruhusa. Angalia Firestore Security Rules."
+      };
+
+      if (messages[code]) {
+        return messages[code];
+      }
+
+      return error?.message || "Hitilafu isiyojulikana imetokea.";
+    }
+
+
+    // AUTH PAGE MODE
+
+    function setAuthMode(signup) {
+
+      isSignup = signup;
+
+      hideMessage(authMessage);
+
+      $("nameGroup").classList.toggle("hidden", !signup);
+
+      $("fullName").required = signup;
+
+      $("password").autocomplete = signup
+        ? "new-password"
+        : "current-password";
+
+      $("authTitle").textContent = signup
+        ? t("createAccount")
+        : t("authTitle");
+
+      $("authSubtitle").textContent = signup
+        ? "Tengeneza akaunti yako ya ShambaSmart."
+        : t("authSubtitle");
+
+      loginButton.textContent = signup
+        ? t("createAccount")
+        : t("login");
+
+      $("toggleAuthButton").textContent = signup
+        ? "Tayari una akaunti? Login"
+        : t("signup");
+
+      $("forgotPasswordButton").classList.toggle("hidden", signup);
+    }
+
+
+    $("toggleAuthButton").addEventListener("click", () => {
+      setAuthMode(!isSignup);
+    });
+
+
+    // LOGIN AND SIGNUP
+    // The form submit event works with the button and Enter key.
+
+    loginForm.addEventListener("submit", async (event) => {
+
+      event.preventDefault();
+
+      hideMessage(authMessage);
+
+      const email = $("email").value.trim();
+      const password = $("password").value;
+      const fullName = $("fullName").value.trim();
+
+      if (!email || !password) {
+        showMessage(authMessage, "Weka barua pepe na nenosiri.", "error");
+        return;
+      }
+
+      if (isSignup && !fullName) {
+        showMessage(authMessage, "Weka jina lako kamili.", "error");
+        return;
+      }
+
+      if (isSignup && password.length < 6) {
+        showMessage(
+          authMessage,
+          "Nenosiri lazima liwe na angalau herufi 6.",
+          "error"
+        );
+        return;
+      }
+
+      loginButton.disabled = true;
+      loginButton.textContent = isSignup
+        ? t("creatingAccount")
+        : t("signingIn");
+
+      try {
+
+        if (isSignup) {
+
+          const credential = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+          const newUser = credential.user;
+
+          try {
+
+            await updateProfile(newUser, {
+              displayName: fullName
+            });
+
+            await setDoc(
+              doc(db, "users", newUser.uid),
+              {
+                uid: newUser.uid,
+                name: fullName,
+                email: email,
+                role: "user",
+                createdAt: serverTimestamp()
+              }
+            );
+
+          } catch (profileError) {
+
+            console.error("Profile save error:", profileError);
+
+            // The Firebase Auth account has already been created.
+            // Never assign admin permissions automatically.
+
+            showMessage(
+              authMessage,
+              t("profileWarning"),
+              "info"
+            );
+
+          }
+
+        } else {
+
+          await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+
+        }
+
+        // onAuthStateChanged will display the app.
+
+      } catch (error) {
+
+        console.error("Authentication error:", error);
+
+        showMessage(
+          authMessage,
+          readableFirebaseError(error),
+          "error"
+        );
+
+      } finally {
+
+        loginButton.disabled = false;
+        loginButton.textContent = isSignup
+          ? t("createAccount")
+          : t("login");
+
+      }
+
+    });
+
+
+    // PASSWORD RESET
+
+    $("forgotPasswordButton").addEventListener("click", async () => {
+
+      hideMessage(authMessage);
+
+      const email = $("email").value.trim();
+
+      if (!email) {
+        showMessage(authMessage, t("enterEmail"), "info");
+        $("email").focus();
+        return;
+      }
+
+      try {
+
+        await sendPasswordResetEmail(auth, email);
+
+        showMessage(
+          authMessage,
+          t("resetSent"),
+          "success"
+        );
+
+      } catch (error) {
+
+        console.error("Password reset error:", error);
+
+        showMessage(
+          authMessage,
+          readableFirebaseError(error),
+          "error"
+        );
+
+      }
+
+    });
+
+
+    // LOGOUT
+
+    $("logoutButton").addEventListener("click", async () => {
+
+      try {
+        await signOut(auth);
+      } catch (error) {
+        alert(readableFirebaseError(error));
+      }
+
+    });
+
+
+    // AUTH STATE
+
+    onAuthStateChanged(auth, async (user) => {
+
+      if (user) {
+
+        currentUser = user;
+
+        authPage.classList.add("hidden");
+        appPage.classList.remove("hidden");
+
+        await showCurrentUser();
+        await loadTransactions();
+
+      } else {
+
+        currentUser = null;
+        transactions = [];
+
+        appPage.classList.add("hidden");
+        authPage.classList.remove("hidden");
+
+        $("transactionsBody").replaceChildren();
+
+        updateDashboard();
+
+        setAuthMode(isSignup);
+
+      }
+
+    });
+
+
+    // DISPLAY USER NAME
+
+    async function showCurrentUser() {
+
+      if (!currentUser) return;
+
+      let displayName =
+        currentUser.displayName ||
+        currentUser.email?.split("@")[0] ||
+        t("user");
+
+      try {
+
+        const profileSnapshot = await getDoc(
+          doc(db, "users", currentUser.uid)
+        );
+
+        if (profileSnapshot.exists()) {
+
+          const profile = profileSnapshot.data();
+
+          if (profile.name) {
+            displayName = profile.name;
+          }
+
+        }
+
+      } catch (error) {
+
+        console.warn("Profile could not be loaded:", error);
+
+      }
+
+      $("headerUserName").textContent = displayName;
+      $("headerUserEmail").textContent = currentUser.email || "";
+
+      $("welcomeTitle").textContent =
+        `${t("welcome")}, ${displayName}`;
+
+    }
+
+
+    // TRANSACTION FORM
+
+    $("transactionDate").value =
+      new Date().toLocaleDateString("en-CA");
+
+
+    $("clearFormButton").addEventListener("click", () => {
+
+      $("transactionForm").reset();
+
+      $("transactionDate").value =
+        new Date().toLocaleDateString("en-CA");
+
+      hideMessage(transactionMessage);
+
+    });
+
+
+    $("transactionForm").addEventListener("submit", async (event) => {
+
+      event.preventDefault();
+
+      hideMessage(transactionMessage);
+
+      if (!currentUser) {
+        showMessage(transactionMessage, "Ingia kwanza.", "error");
+        return;
+      }
+
+      const type = $("transactionType").value;
+      const date = $("transactionDate").value;
+      const description = $("description").value.trim();
+      const person = $("person").value.trim();
+      const amount = Number($("amount").value);
+
+      if (!date || !description || !Number.isFinite(amount) || amount <= 0) {
+
+        showMessage(
+          transactionMessage,
+          t("invalidAmount"),
+          "error"
+        );
+
+        return;
+      }
+
+      const saveButton = $("saveTransactionButton");
+
+      saveButton.disabled = true;
+      saveButton.textContent = t("saving");
+
+      try {
+
+        await addDoc(
+          collection(db, "transactions"),
+          {
+            uid: currentUser.uid,
+            date: date,
+            type: type,
+            description: description,
+            person: person,
+            amount: amount,
+            createdAt: serverTimestamp()
+          }
+        );
+
+        $("transactionForm").reset();
+
+        $("transactionDate").value =
+          new Date().toLocaleDateString("en-CA");
+
+        showMessage(
+          transactionMessage,
+          t("transactionSaved"),
+          "success"
+        );
+
+        await loadTransactions();
+
+      } catch (error) {
+
+        console.error("Transaction save error:", error);
+
+        showMessage(
+          transactionMessage,
+          readableFirebaseError(error),
+          "error"
+        );
+
+      } finally {
+
+        saveButton.disabled = false;
+        saveButton.textContent = t("save");
+
+      }
+
+    });
+
+
+    // LOAD CURRENT USER TRANSACTIONS
+
+    async function loadTransactions() {
+
+      if (!currentUser) return;
+
+      $("loadingMessage").textContent =
+        "Inapakia miamala...";
+
+      $("loadingMessage").className = "message info";
+
+      try {
+
+        const transactionQuery = query(
+          collection(db, "transactions"),
+          where("uid", "==", currentUser.uid)
+        );
+
+        const snapshot = await getDocs(transactionQuery);
+
+        transactions = snapshot.docs.map((item) => ({
+          id: item.id,
+          ...item.data()
+        }));
+
+        transactions.sort((a, b) => {
+          const dateCompare =
+            String(b.date || "").localeCompare(String(a.date || ""));
+
+          if (dateCompare !== 0) {
+            return dateCompare;
+          }
+
+          return (b.createdAt?.seconds || 0) -
+                 (a.createdAt?.seconds || 0);
+        });
+
+        updateDashboard();
+        renderTransactions();
+
+        hideMessage($("loadingMessage"));
+
+      } catch (error) {
+
+        console.error("Load transactions error:", error);
+
+        showMessage(
+          $("loadingMessage"),
+          readableFirebaseError(error),
+          "error"
+        );
+
+      }
+
+    }
+
+
+    // CURRENCY FORMAT
+
+    function formatMoney(value) {
+
+      return new Intl.NumberFormat("sw-TZ", {
+        style: "currency",
+        currency: "TZS",
+        maximumFractionDigits: 0
+      }).format(value || 0);
+
+    }
+
+
+    // DASHBOARD TOTALS
+
+    function updateDashboard() {
+
+      const income = transactions
+        .filter(item => item.type === "income")
+        .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+
+      const expenses = transactions
+        .filter(item => item.type === "expense")
+        .reduce((sum, item) => sum + Number(item.amount || 0), 0);
+
+      const balance = income - expenses;
+
+      $("totalIncome").textContent = formatMoney(income);
+      $("totalExpenses").textContent = formatMoney(expenses);
+      $("totalBalance").textContent = formatMoney(balance);
+      $("transactionCount").textContent = transactions.length;
+
+      $("totalBalance").className =
+        "stat-value " + (balance < 0 ? "red" : "green");
+
+    }
+
+
+    // RENDER TRANSACTION TABLE
+
+    function renderTransactions() {
+
+      const search = $("searchTransactions").value
+        .trim()
+        .toLowerCase();
+
+      const filtered = transactions.filter(item => {
+
+        const searchableText = [
+          item.date,
+          item.type,
+          item.description,
+          item.person,
+          item.amount
+        ].join(" ").toLowerCase();
+
+        return searchableText.includes(search);
+
+      });
+
+      const tbody = $("transactionsBody");
+
+      tbody.replaceChildren();
+
+      $("emptyTransactions").classList.toggle(
+        "hidden",
+        filtered.length > 0
+      );
+
+      if (filtered.length === 0) {
+
+        $("emptyTransactions").textContent =
+          transactions.length === 0
+            ? t("empty")
+            : "Hakuna matokeo ya utafutaji.";
+
+        return;
+
+      }
+
+      for (const item of filtered) {
+
+        const row = document.createElement("tr");
+
+        function addCell(value) {
+
+          const cell = document.createElement("td");
+          cell.textContent = value ?? "";
+          row.appendChild(cell);
+
+          return cell;
+
+        }
+
+        addCell(item.date || "");
+
+        const typeCell = addCell("");
+
+        const badge = document.createElement("span");
+
+        badge.className = item.type === "income"
+          ? "badge badge-income"
+          : "badge badge-expense";
+
+        badge.textContent = item.type === "income"
+          ? t("incomeOption")
+          : t("expenseOption");
+
+        typeCell.appendChild(badge);
+
+        addCell(item.description || "");
+        addCell(item.person || "");
+        addCell(formatMoney(Number(item.amount || 0)));
+
+        const actionCell = addCell("");
+        actionCell.className = "delete-column no-print";
+
+        const deleteButton = document.createElement("button");
+
+        deleteButton.type = "button";
+        deleteButton.className = "small-button";
+        deleteButton.textContent = t("delete");
+
+        deleteButton.addEventListener("click", async () => {
+
+          if (!confirm(t("confirmDelete"))) return;
+
+          if (!currentUser) return;
+
+          try {
+
+            // Only attempt deletion of a transaction owned by this user.
+            // Firestore rules must enforce ownership as well.
+
+            const transactionRef = doc(
+              db,
+              "transactions",
+              item.id
+            );
+
+            const existing = await getDoc(transactionRef);
+
+            if (!existing.exists()) {
+              await loadTransactions();
+              return;
+            }
+
+            if (existing.data().uid !== currentUser.uid) {
+              alert(t("noPermission"));
+              return;
+            }
+
+            await deleteDoc(transactionRef);
+
+            await loadTransactions();
+
+            showMessage(
+              transactionMessage,
+              t("transactionDeleted"),
+              "success"
+            );
+
+          } catch (error) {
+
+            console.error("Delete transaction error:", error);
+
+            alert(readableFirebaseError(error));
+
+          }
+
+        });
+
+        actionCell.appendChild(deleteButton);
+
+        tbody.appendChild(row);
+
+      }
+
+    }
+
+
+    $("searchTransactions").addEventListener(
+      "input",
+      renderTransactions
+    );
+
+
+    // EXPORT CSV
+
+    $("csvButton").addEventListener("click", () => {
+
+      if (transactions.length === 0) {
+        alert(t("csvEmpty"));
+        return;
+      }
+
+      const headers = [
+        "Date",
+        "Type",
+        "Description",
+        "Person",
+        "Amount_TZS"
+      ];
+
+      const rows = transactions.map(item => [
+        item.date || "",
+        item.type || "",
+        item.description || "",
+        item.person || "",
+        Number(item.amount || 0)
+      ]);
+
+      function escapeCSV(value) {
+
+        let text = String(value ?? "");
+
+        // Prevent spreadsheet formula execution from user-entered text.
+        if (/^[=+\-@]/.test(text)) {
+          text = "'" + text;
+        }
+
+        return '"' + text.replace(/"/g, '""') + '"';
+
+      }
+
+      const csv = [
+        headers.map(escapeCSV).join(","),
+        ...rows.map(row => row.map(escapeCSV).join(","))
+      ].join("\r\n");
+
+      const blob = new Blob(
+        ["\uFEFF" + csv],
+        { type: "text/csv;charset=utf-8;" }
+      );
+
+      const url = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "ShambaSmart-Transactions.csv";
+
+      document.body.appendChild(link);
+
+      link.click();
+      link.remove();
+
+      URL.revokeObjectURL(url);
+
+      showMessage(
+        transactionMessage,
+        t("csvSuccess"),
+        "success"
+      );
+
+    });
+
+
+    // PRINT OR SAVE AS PDF
+
+    $("printButton").addEventListener("click", () => {
+      window.print();
+    });
+
+
+    // LANGUAGE SWITCH
+
+    $("languageButton").addEventListener("click", () => {
+
+      language = language === "sw" ? "en" : "sw";
+
+      applyLanguage();
+
+    });
+
+
+    function applyLanguage() {
+
+      const keys = {
+
+        authTitle: "authTitle",
+        authSubtitle: "authSubtitle",
+        welcomeSubtitle: "welcomeSubtitle",
+        incomeLabel: "income",
+        expenseLabel: "expenses",
+        balanceLabel: "balance",
+        countLabel: "count",
+        formTitle: "formTitle",
+        formDescription: "formDescription",
+        typeLabel: "type",
+        dateLabel: "date",
+        descriptionLabel: "description",
+        personLabel: "person",
+        amountLabel: "amount",
+        saveTransactionButton: "save",
+        clearFormButton: "clear",
+        historyTitle: "history",
+        historyDescription: "historyDescription",
+        csvButton: "csv",
+        printButton: "print",
+        thDate: "thDate",
+        thType: "thType",
+        thDescription: "thDescription",
+        thPerson: "thPerson",
+        thAmount: "thAmount",
+        thAction: "thAction",
+        logoutButton: "logout",
+        forgotPasswordButton: "forgot"
+
+      };
+
+      for (const [elementId, key] of Object.entries(keys)) {
+
+        const element = $(elementId);
+
+        if (element) {
+          element.textContent = t(key);
+        }
+
+      }
+
+      $("languageButton").textContent =
+        language === "sw" ? "English" : "Kiswahili";
+
+      $("searchTransactions").placeholder = t("search");
+
+      $("transactionType").options[0].textContent = t("incomeOption");
+      $("transactionType").options[1].textContent = t("expenseOption");
+
+      $("toggleAuthButton").textContent = isSignup
+        ? "Tayari una akaunti? Login"
+        : t("signup");
+
+      loginButton.textContent = isSignup
+        ? t("createAccount")
+        : t("login");
+
+      renderTransactions();
+
+      if (currentUser) {
+        showCurrentUser();
+      }
+
+    }
+
+
+    // LOG INITIALIZATION ERRORS
+
+    window.addEventListener("error", (event) => {
+
+      console.error(
+        "Application error:",
+        event.message,
+        event.filename,
+        event.lineno
+      );
+
+    });
+
+
+    console.log("ShambaSmart initialized.");
+
+  </script>
+
+</body>
+</html>
